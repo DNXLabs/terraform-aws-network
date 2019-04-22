@@ -12,4 +12,12 @@ resource "aws_nat_gateway" "nat_gw" {
     create_before_destroy = true
     ignore_changes        = ["subnet_id"]
   }
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-NATGW",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }

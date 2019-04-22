@@ -4,13 +4,30 @@ resource "aws_subnet" "private" {
   cidr_block              = "${cidrsubnet(aws_vpc.default.cidr_block, var.newbits, count.index + var.private_netnum_offset)}"
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = false
-  tags                    = "${merge(map("Name", "${var.name}-Subnet-Private-${upper(data.aws_availability_zone.az.*.name_suffix[count.index])}"), map("Scheme", "private"), var.tags)}"
-  depends_on              = ["aws_nat_gateway.nat_gw"]
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-Subnet-Private-${upper(data.aws_availability_zone.az.*.name_suffix[count.index])}",
+      "Scheme", "private",
+      "EnvName", "${var.name}"
+    )
+  )}"
+
+  depends_on = ["aws_nat_gateway.nat_gw"]
 }
 
 resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.default.id}"
-  tags   = "${merge(map("Name", "${var.name}-RouteTable-Private"), var.tags)}"
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-RouteTable-Private",
+      "Scheme", "private",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }
 
 resource "aws_route" "nat_route" {

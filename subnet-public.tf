@@ -4,12 +4,28 @@ resource "aws_subnet" "public" {
   cidr_block              = "${cidrsubnet(aws_vpc.default.cidr_block, var.newbits, count.index + var.public_netnum_offset)}"
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = true
-  tags                    = "${merge(map("Name", "${var.name}-Subnet-Public-${upper(data.aws_availability_zone.az.*.name_suffix[count.index])}"), map("Scheme", "public"), var.tags)}"
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-Subnet-Public-${upper(data.aws_availability_zone.az.*.name_suffix[count.index])}",
+      "Scheme", "public",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }
 
 resource "aws_route_table" "public" {
   vpc_id = "${aws_vpc.default.id}"
-  tags   = "${merge(map("Name", "${var.name}-RouteTable-Public"), var.tags)}"
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-RouteTable-Public",
+      "Scheme", "public",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }
 
 resource "aws_route" "internet_route" {

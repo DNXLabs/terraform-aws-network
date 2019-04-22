@@ -4,13 +4,30 @@ resource "aws_subnet" "secure" {
   cidr_block              = "${cidrsubnet(aws_vpc.default.cidr_block, var.newbits, count.index + var.secure_netnum_offset)}"
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = false
-  tags                    = "${merge(map("Name", "${var.name}-Subnet-Secure-${upper(data.aws_availability_zone.az.*.name_suffix[count.index])}"), map("Scheme", "secure"), var.tags)}"
-  depends_on              = ["aws_nat_gateway.nat_gw"]
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-Subnet-Secure-${upper(data.aws_availability_zone.az.*.name_suffix[count.index])}",
+      "Scheme", "secure",
+      "EnvName", "${var.name}"
+    )
+  )}"
+
+  depends_on = ["aws_nat_gateway.nat_gw"]
 }
 
 resource "aws_route_table" "secure" {
   vpc_id = "${aws_vpc.default.id}"
-  tags   = "${merge(map("Name", "${var.name}-RouteTable-Secure"), var.tags)}"
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-RouteTable-Secure",
+      "Scheme", "secure",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }
 
 resource "aws_route_table_association" "secure" {
