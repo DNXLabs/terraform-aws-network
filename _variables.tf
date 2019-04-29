@@ -6,9 +6,9 @@ variable "vpc_cidr" {
   description = "Network CIDR for the VPC"
 }
 
-variable "nat_count" {
-  default     = 1
-  description = "Number of NAT Gateways to create (usually 1 or the number of AZs)"
+variable "multi_nat" {
+  default     = false
+  description = "Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT"
 }
 
 variable "newbits" {

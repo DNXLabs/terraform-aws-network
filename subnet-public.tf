@@ -44,7 +44,7 @@ resource "aws_route_table_association" "public" {
   route_table_id = "${aws_route_table.public.id}"
 
   lifecycle {
-    ignore_changes        = ["subnet_id", "route_table_id"]
+    # ignore_changes        = ["subnet_id", "route_table_id"]
     create_before_destroy = true
   }
 }

@@ -18,12 +18,13 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_route_table" "private" {
+  count  = "${length(data.aws_availability_zones.available.names)}"
   vpc_id = "${aws_vpc.default.id}"
 
   tags = "${merge(
     var.tags,
     map(
-      "Name", "${var.name}-RouteTable-Private",
+      "Name", "${var.name}-RouteTable-Private-${count.index}",
       "Scheme", "private",
       "EnvName", "${var.name}"
     )
@@ -31,10 +32,29 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "nat_route" {
-  route_table_id = "${aws_route_table.private.id}"
+  count = "${var.multi_nat ? length(data.aws_availability_zones.available.names) : 0}"
 
+  # count = "${var.nat_count == length(data.aws_availability_zones.available.names) ? var.nat_count : 0}"
+  count = "${length(data.aws_availability_zones.available.names)}"
+
+  route_table_id         = "${aws_route_table.private.*.id[count.index]}"
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = "${aws_nat_gateway.nat_gw.id}"
+  nat_gateway_id         = "${aws_nat_gateway.nat_gw.*.id[count.index]}"
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = ["route_table_id", "nat_gateway_id"]
+  }
+
+  depends_on = ["aws_nat_gateway.nat_gw"]
+}
+
+resource "aws_route" "nat_route_single_nat" {
+  count = "${var.multi_nat ? 0 : length(data.aws_availability_zones.available.names)}"
+
+  route_table_id         = "${aws_route_table.private.*.id[count.index]}"
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = "${aws_nat_gateway.nat_gw.*.id[0]}"
 
   lifecycle {
     create_before_destroy = true
@@ -47,10 +67,23 @@ resource "aws_route" "nat_route" {
 resource "aws_route_table_association" "private" {
   count          = "${length(data.aws_availability_zones.available.names)}"
   subnet_id      = "${aws_subnet.private.*.id[count.index]}"
-  route_table_id = "${aws_route_table.private.id}"
+  route_table_id = "${aws_route_table.private.*.id[count.index]}"
 
   lifecycle {
     ignore_changes        = ["subnet_id"]
     create_before_destroy = true
   }
 }
+
+# resource "aws_route_table_association" "private_single" {
+#   count          = "${var.nat_count == length(data.aws_availability_zones.available.names) ? 0 : 1}"
+#   subnet_id      = "${aws_subnet.private.*.id[count.index]}"
+#   route_table_id = "${aws_route_table.private.*.id[count.index]}"
+
+
+#   lifecycle {
+#     ignore_changes        = ["subnet_id"]
+#     create_before_destroy = true
+#   }
+# }
+
