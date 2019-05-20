@@ -6,12 +6,12 @@ This terraform module basic network resources for a region.
 
 ```hcl
 module "network" {
-  source = "git::https://github.com/DNXLabs/terraform-aws-network.git?ref=0.0.1"
+  source = "git::https://github.com/DNXLabs/terraform-aws-network.git?ref=0.0.3"
 
   vpc_cidr              = "10.1.0.0/16"
   newbits               = 8             # will create /24 subnets
   name                  = "MyVPC"
-  nat_count             = 1
+  multi_nat             = false
 }
 ```
 
