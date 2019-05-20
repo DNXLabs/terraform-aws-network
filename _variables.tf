@@ -36,3 +36,27 @@ variable "secure_netnum_offset" {
   default     = 20
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
+
+variable "public_nacl_inbound_tcp_ports" {
+  type        = "list"
+  default     = ["80", "443", "22", "1194"]
+  description = "TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
+}
+
+variable "public_nacl_inbound_udp_ports" {
+  type        = "list"
+  default     = ["1194"]
+  description = "UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
+}
+
+variable "secure_nacl_inbound_tcp_ports" {
+  type        = "list"
+  default     = ["5432", "3306", "1433", "1521", "2049"]
+  description = "TCP Ports to allow inbound on secure subnet via NACLs (this list cannot be empty)"
+}
+
+variable "secure_nacl_inbound_udp_ports" {
+  type        = "list"
+  default     = ["65535"]
+  description = "UDP Ports to allow inbound on secure subnet via NACLs (this list cannot be empty)"
+}
