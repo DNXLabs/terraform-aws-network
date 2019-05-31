@@ -8,6 +8,14 @@ resource "aws_flow_log" "vpc" {
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/${var.name}-VPC/flow-logs"
   retention_in_days = "${var.vpc_flow_logs_retention}"
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-VPC-Flow-LogGroup",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }
 
 resource "aws_iam_role" "vpc_flow_logs" {
@@ -28,6 +36,14 @@ resource "aws_iam_role" "vpc_flow_logs" {
   ]
 }
 EOF
+
+  tags = "${merge(
+    var.tags,
+    map(
+      "Name", "${var.name}-VPC-Flow-IAM-Role",
+      "EnvName", "${var.name}"
+    )
+  )}"
 }
 
 resource "aws_iam_role_policy" "vpc_flow_log" {

@@ -6,7 +6,6 @@ resource "aws_vpc" "default" {
     var.tags,
     map(
       "Name", "${var.name}-VPC",
-      "TerraformWorkspace", "${terraform.workspace}",
       "EnvName", "${var.name}"
     )
   )}"
