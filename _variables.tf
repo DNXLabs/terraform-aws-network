@@ -60,4 +60,8 @@ variable "secure_nacl_inbound_udp_ports" {
   default     = []
   description = "UDP Ports to allow inbound on secure subnet via NACLs"
 }
+
+variable "vpc_flow_logs_retention" {
+  default     = 365
+  description = "Retention in days for VPC Flow Logs CloudWatch Log Group"
 }
