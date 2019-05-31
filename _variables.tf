@@ -57,6 +57,7 @@ variable "secure_nacl_inbound_tcp_ports" {
 
 variable "secure_nacl_inbound_udp_ports" {
   type        = "list"
-  default     = ["65535"]
-  description = "UDP Ports to allow inbound on secure subnet via NACLs (this list cannot be empty)"
+  default     = []
+  description = "UDP Ports to allow inbound on secure subnet via NACLs"
+}
 }

@@ -17,9 +17,8 @@ resource "aws_network_acl" "private" {
 ###########
 
 resource "aws_network_acl_rule" "out_private_to_world" {
-  count          = "${length(aws_subnet.private.*.cidr_block)}"
   network_acl_id = "${aws_network_acl.private.id}"
-  rule_number    = "${count.index + 1}"
+  rule_number    = "1"
   egress         = true
   protocol       = -1
   rule_action    = "allow"
@@ -27,42 +26,6 @@ resource "aws_network_acl_rule" "out_private_to_world" {
   from_port      = 0
   to_port        = 0
 }
-
-# resource "aws_network_acl_rule" "out_private_to_private" {
-#   count          = "${length(aws_subnet.private.*.cidr_block)}"
-#   network_acl_id = "${aws_network_acl.private.id}"
-#   rule_number    = "${count.index + 1}"
-#   egress         = true
-#   protocol       = -1
-#   rule_action    = "allow"
-#   cidr_block     = "${aws_subnet.private.*.cidr_block[count.index]}"
-#   from_port      = 0
-#   to_port        = 0
-# }
-
-# resource "aws_network_acl_rule" "out_private_to_public" {
-#   count          = "${length(aws_subnet.public.*.cidr_block)}"
-#   network_acl_id = "${aws_network_acl.private.id}"
-#   rule_number    = "${count.index + 100}"
-#   egress         = true
-#   protocol       = -1
-#   rule_action    = "allow"
-#   cidr_block     = "${aws_subnet.public.*.cidr_block[count.index]}"
-#   from_port      = 0
-#   to_port        = 0
-# }
-
-# resource "aws_network_acl_rule" "out_private_to_secure" {
-#   count          = "${length(aws_subnet.secure.*.cidr_block)}"
-#   network_acl_id = "${aws_network_acl.private.id}"
-#   rule_number    = "${count.index + 200}"
-#   egress         = true
-#   protocol       = -1
-#   rule_action    = "allow"
-#   cidr_block     = "${aws_subnet.secure.*.cidr_block[count.index]}"
-#   from_port      = 0
-#   to_port        = 0
-# }
 
 ###########
 # INGRESS
