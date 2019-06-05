@@ -1,7 +1,7 @@
 resource "aws_subnet" "transit" {
   count                   = "${var.transit_subnet ? length(data.aws_availability_zones.available.names) : 0}"
   vpc_id                  = "${aws_vpc.default.id}"
-  cidr_block              = "${cidrsubnet(var.vpc_cidr_transit, 2, count.index)}"
+  cidr_block              = "${cidrsubnet(aws_vpc.default.cidr_block, var.newbits, count.index + var.transit_netnum_offset)}"
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = true
 
@@ -13,8 +13,6 @@ resource "aws_subnet" "transit" {
       "EnvName", "${var.name}"
     )
   )}"
-
-  depends_on = ["aws_vpc_ipv4_cidr_block_association.transit"]
 }
 
 resource "aws_route_table" "transit" {

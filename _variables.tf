@@ -42,6 +42,11 @@ variable "secure_netnum_offset" {
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
 
+variable "transit_netnum_offset" {
+  default     = 15
+  description = "Start with this subnet for secure ones, plus number of AZs"
+}
+
 variable "transit_subnet" {
   default     = false
   description = "Create a transit subnet for VPC peering (only central account)"
