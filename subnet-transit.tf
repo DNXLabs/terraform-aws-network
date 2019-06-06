@@ -22,7 +22,7 @@ resource "aws_route_table" "transit" {
   tags = "${merge(
     var.tags,
     map(
-      "Name", "${var.name}-RouteTable-transit",
+      "Name", "${var.name}-RouteTable-Transit",
       "Scheme", "transit",
       "EnvName", "${var.name}"
     )
@@ -42,9 +42,7 @@ resource "aws_route" "transit_internet_route" {
 }
 
 resource "aws_route_table_association" "transit" {
-  count = "${var.transit_subnet ? 1 : 0}"
-
-  count          = "${length(data.aws_availability_zones.available.names)}"
+  count          = "${var.transit_subnet ? length(data.aws_availability_zones.available.names) : 0}"
   subnet_id      = "${aws_subnet.transit.*.id[count.index]}"
   route_table_id = "${aws_route_table.transit.id}"
 
