@@ -135,3 +135,15 @@ resource "aws_network_acl_rule" "in_transit_from_private" {
   from_port      = 0
   to_port        = 0
 }
+
+resource "aws_network_acl_rule" "in_transit_from_secure" {
+  count          = "${var.transit_subnet ? length(aws_subnet.secure.*.cidr_block) : 0}"
+  network_acl_id = "${aws_network_acl.transit.id}"
+  rule_number    = "${count.index + 701}"
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = "${aws_subnet.secure.*.cidr_block[count.index]}"
+  from_port      = 0
+  to_port        = 0
+}

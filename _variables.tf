@@ -64,18 +64,6 @@ variable "public_nacl_inbound_udp_ports" {
   description = "UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
 }
 
-variable "secure_nacl_inbound_tcp_ports" {
-  type        = "list"
-  default     = ["5432", "3306", "1433", "1521", "2049"]
-  description = "TCP Ports to allow inbound on secure subnet via NACLs (this list cannot be empty)"
-}
-
-variable "secure_nacl_inbound_udp_ports" {
-  type        = "list"
-  default     = []
-  description = "UDP Ports to allow inbound on secure subnet via NACLs"
-}
-
 variable "transit_nacl_inbound_tcp_ports" {
   type        = "list"
   default     = ["1194"]
