@@ -34,16 +34,12 @@ resource "aws_route_table" "private" {
 resource "aws_route" "nat_route" {
   count = "${var.multi_nat ? length(data.aws_availability_zones.available.names) : 0}"
 
-  # count = "${var.nat_count == length(data.aws_availability_zones.available.names) ? var.nat_count : 0}"
-  count = "${length(data.aws_availability_zones.available.names)}"
-
   route_table_id         = "${aws_route_table.private.*.id[count.index]}"
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = "${aws_nat_gateway.nat_gw.*.id[count.index]}"
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = ["route_table_id", "nat_gateway_id"]
   }
 
   depends_on = ["aws_nat_gateway.nat_gw"]
@@ -58,7 +54,6 @@ resource "aws_route" "nat_route_single_nat" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = ["route_table_id", "nat_gateway_id"]
   }
 
   depends_on = ["aws_nat_gateway.nat_gw"]
