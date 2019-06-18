@@ -16,11 +16,6 @@ resource "aws_nat_gateway" "nat_gw" {
   allocation_id = "${aws_eip.nat_eip.*.id[count.index]}"
   subnet_id     = "${aws_subnet.public.*.id[count.index]}"
 
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes        = ["subnet_id"]
-  }
-
   tags = "${merge(
     var.tags,
     map(
