@@ -19,7 +19,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
 }
 
 resource "aws_iam_role" "vpc_flow_logs" {
-  name = "${var.name}-VPC-flow-logs"
+  name = "${var.name}-${data.aws_region.current.name}-VPC-flow-logs"
 
   assume_role_policy = <<EOF
 {
@@ -41,13 +41,14 @@ EOF
     var.tags,
     map(
       "Name", "${var.name}-VPC-Flow-IAM-Role",
-      "EnvName", "${var.name}"
+      "EnvName", "${var.name}",
+      "Region", "${data.aws_region.current.name}"
     )
   )}"
 }
 
 resource "aws_iam_role_policy" "vpc_flow_log" {
-  name = "${var.name}-VPC-flow-logs"
+  name = "${var.name}-${data.aws_region.current.name}-VPC-flow-logs"
   role = "${aws_iam_role.vpc_flow_logs.id}"
 
   policy = <<EOF
