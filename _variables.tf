@@ -1,3 +1,8 @@
+variable "max_az" {
+  default = 3
+  description = "Max number of AZs"
+}
+
 variable "name" {
   description = "Name prefix for the resources of this stack"
 }

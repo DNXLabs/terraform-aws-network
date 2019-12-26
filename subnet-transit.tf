@@ -1,5 +1,5 @@
 resource "aws_subnet" "transit" {
-  count                   = "${var.transit_subnet ? length(data.aws_availability_zones.available.names) : 0}"
+  count                   = "${var.transit_subnet ? (length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)) : 0}"
   vpc_id                  = "${aws_vpc.default.id}"
   cidr_block              = "${cidrsubnet(aws_vpc.default.cidr_block, var.newbits, count.index + var.transit_netnum_offset)}"
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
@@ -32,7 +32,8 @@ resource "aws_route_table" "transit" {
 resource "aws_route" "transit_internet_route" {
   count = "${var.transit_subnet ? 1 : 0}"
 
-  route_table_id         = "${aws_route_table.transit.id}"
+  # route_table_id         = "${aws_route_table.transit.id}"
+  route_table_id         = "${aws_route_table.transit.*.id[count.index]}"
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = "${aws_internet_gateway.default.id}"
 
@@ -42,9 +43,11 @@ resource "aws_route" "transit_internet_route" {
 }
 
 resource "aws_route_table_association" "transit" {
-  count          = "${var.transit_subnet ? length(data.aws_availability_zones.available.names) : 0}"
+  count          = "${var.transit_subnet ? (length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)) : 0}"
   subnet_id      = "${aws_subnet.transit.*.id[count.index]}"
-  route_table_id = "${aws_route_table.transit.id}"
+  # route_table_id = "${aws_route_table.transit.id}"
+  route_table_id = "${aws_route_table.transit.*.id[count.index]}"
+  
 
   lifecycle {
     # ignore_changes        = ["subnet_id", "route_table_id"]
