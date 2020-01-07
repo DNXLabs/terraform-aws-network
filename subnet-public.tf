@@ -16,7 +16,6 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_route_table" "public" {
-  count  = "${length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)}"
   vpc_id = "${aws_vpc.default.id}"
 
   tags = "${merge(
@@ -30,7 +29,6 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route" "public_internet_route" {
-  count = "${var.multi_nat ? (length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)) : 0}"
   route_table_id         = "${aws_route_table.public.id}"
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = "${aws_internet_gateway.default.id}"
@@ -43,9 +41,8 @@ resource "aws_route" "public_internet_route" {
 resource "aws_route_table_association" "public" {
   count          = "${length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)}"
   subnet_id      = "${aws_subnet.public.*.id[count.index]}"
-  # route_table_id = "${aws_route_table.public.id}"
-  route_table_id = "${aws_route_table.public.*.id[count.index]}"
-  
+  route_table_id = "${aws_route_table.public.id}"
+
   lifecycle {
     # ignore_changes        = ["subnet_id", "route_table_id"]
     create_before_destroy = true

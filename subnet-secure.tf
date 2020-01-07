@@ -18,7 +18,6 @@ resource "aws_subnet" "secure" {
 }
 
 resource "aws_route_table" "secure" {
-  count  = "${length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)}"
   vpc_id = "${aws_vpc.default.id}"
 
   tags = "${merge(
@@ -34,8 +33,7 @@ resource "aws_route_table" "secure" {
 resource "aws_route_table_association" "secure" {
   count          = "${length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)}"
   subnet_id      = "${aws_subnet.secure.*.id[count.index]}"
-  # route_table_id = "${aws_route_table.secure.id}"
-  route_table_id = "${aws_route_table.secure.*.id[count.index]}"
+  route_table_id = "${aws_route_table.secure.id}"
 
   lifecycle {
     ignore_changes        = ["subnet_id"]
