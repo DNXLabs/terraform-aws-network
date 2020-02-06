@@ -1,6 +1,6 @@
 resource "aws_network_acl" "public" {
   vpc_id     = "${aws_vpc.default.id}"
-  subnet_ids = ["${aws_subnet.public.*.id}"]
+  subnet_ids = "${aws_subnet.public.*.id}"
 
   tags = "${merge(
     var.tags,
