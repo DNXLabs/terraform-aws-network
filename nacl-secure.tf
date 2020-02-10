@@ -1,6 +1,6 @@
 resource "aws_network_acl" "secure" {
   vpc_id     = "${aws_vpc.default.id}"
-  subnet_ids = ["${aws_subnet.secure.*.id}"]
+  subnet_ids = "${aws_subnet.secure.*.id}"
 
   tags = "${merge(
     var.tags,
