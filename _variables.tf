@@ -1,5 +1,5 @@
 variable "max_az" {
-  default = 3
+  default     = 3
   description = "Max number of AZs"
 }
 

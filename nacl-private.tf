@@ -1,15 +1,15 @@
 resource "aws_network_acl" "private" {
-  vpc_id     = "${aws_vpc.default.id}"
-  subnet_ids = "${aws_subnet.private.*.id}"
+  vpc_id     = aws_vpc.default.id
+  subnet_ids = aws_subnet.private.*.id
 
-  tags = "${merge(
+  tags = merge(
     var.tags,
-    map(
-      "Name", "${var.name}-ACL-Private",
-      "Scheme", "private",
-      "EnvName", "${var.name}"
-    )
-  )}"
+    {
+      "Name"    = "${var.name}-ACL-Private"
+      "Scheme"  = "private"
+      "EnvName" = var.name
+    }
+  )
 }
 
 ###########
@@ -17,7 +17,7 @@ resource "aws_network_acl" "private" {
 ###########
 
 resource "aws_network_acl_rule" "out_private_to_world" {
-  network_acl_id = "${aws_network_acl.private.id}"
+  network_acl_id = aws_network_acl.private.id
   rule_number    = "1"
   egress         = true
   protocol       = -1
@@ -32,7 +32,7 @@ resource "aws_network_acl_rule" "out_private_to_world" {
 ###########
 
 resource "aws_network_acl_rule" "in_private_from_world_tcp" {
-  network_acl_id = "${aws_network_acl.private.id}"
+  network_acl_id = aws_network_acl.private.id
   rule_number    = "1"
   egress         = false
   protocol       = "tcp"
@@ -43,7 +43,7 @@ resource "aws_network_acl_rule" "in_private_from_world_tcp" {
 }
 
 resource "aws_network_acl_rule" "in_private_from_world_icmp_reply" {
-  network_acl_id = "${aws_network_acl.private.id}"
+  network_acl_id = aws_network_acl.private.id
   rule_number    = "100"
   egress         = false
   protocol       = "icmp"
@@ -54,37 +54,37 @@ resource "aws_network_acl_rule" "in_private_from_world_icmp_reply" {
 }
 
 resource "aws_network_acl_rule" "in_private_from_private" {
-  count          = "${length(aws_subnet.private.*.cidr_block)}"
-  network_acl_id = "${aws_network_acl.private.id}"
-  rule_number    = "${count.index + 201}"
+  count          = length(aws_subnet.private.*.cidr_block)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 201
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = "${aws_subnet.private.*.cidr_block[count.index]}"
+  cidr_block     = aws_subnet.private[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "in_private_from_public" {
-  count          = "${length(aws_subnet.public.*.cidr_block)}"
-  network_acl_id = "${aws_network_acl.private.id}"
-  rule_number    = "${count.index + 301}"
+  count          = length(aws_subnet.public.*.cidr_block)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 301
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = "${aws_subnet.public.*.cidr_block[count.index]}"
+  cidr_block     = aws_subnet.public[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "in_private_from_secure" {
-  count          = "${length(aws_subnet.secure.*.cidr_block)}"
-  network_acl_id = "${aws_network_acl.private.id}"
-  rule_number    = "${count.index + 401}"
+  count          = length(aws_subnet.secure.*.cidr_block)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 401
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = "${aws_subnet.secure.*.cidr_block[count.index]}"
+  cidr_block     = aws_subnet.secure[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
