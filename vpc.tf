@@ -1,24 +1,24 @@
 resource "aws_vpc" "default" {
-  cidr_block           = "${var.vpc_cidr}"
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
 
-  tags = "${merge(
+  tags = merge(
     var.tags,
-    map(
-      "Name", "${var.name}-VPC",
-      "EnvName", "${var.name}"
-    )
-  )}"
+    {
+      "Name"    = "${var.name}-VPC"
+      "EnvName" = var.name
+    },
+  )
 }
 
 resource "aws_internet_gateway" "default" {
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id = aws_vpc.default.id
 
-  tags = "${merge(
+  tags = merge(
     var.tags,
-    map(
-      "Name", "${var.name}-IG",
-      "EnvName", "${var.name}"
-    )
-  )}"
+    {
+      "Name"    = "${var.name}-IG"
+      "EnvName" = var.name
+    },
+  )
 }
