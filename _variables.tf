@@ -27,7 +27,7 @@ variable "newbits" {
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   default     = {}
   description = "Extra tags to attach to resources"
 }
@@ -58,25 +58,25 @@ variable "transit_subnet" {
 }
 
 variable "public_nacl_inbound_tcp_ports" {
-  type        = "list"
+  type        = list(string)
   default     = ["80", "443", "22", "1194"]
   description = "TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
 }
 
 variable "public_nacl_inbound_udp_ports" {
-  type        = "list"
+  type        = list(string)
   default     = []
   description = "UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
 }
 
 variable "transit_nacl_inbound_tcp_ports" {
-  type        = "list"
+  type        = list(string)
   default     = ["1194"]
   description = "TCP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty)"
 }
 
 variable "transit_nacl_inbound_udp_ports" {
-  type        = "list"
+  type        = list(string)
   default     = ["1194"]
   description = "UDP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty)"
 }
