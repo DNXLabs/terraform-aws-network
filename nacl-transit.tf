@@ -117,7 +117,7 @@ resource "aws_network_acl_rule" "in_transit_icmp" {
 }
 
 resource "aws_network_acl_rule" "in_transit_from_private" {
-  count = var.transit_subnet ? length(aws_subnet.private.*.cidr_block) : 0
+  count          = var.transit_subnet ? length(aws_subnet.private.*.cidr_block) : 0
   network_acl_id = aws_network_acl.transit[0].id
   rule_number    = count.index + 601
   egress         = false
