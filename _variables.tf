@@ -7,6 +7,10 @@ variable "name" {
   description = "Name prefix for the resources of this stack"
 }
 
+variable "cf_export_name" {
+  description = "Name prefix for the export resources of the cloud formation output"
+}
+
 variable "vpc_cidr" {
   description = "Network CIDR for the VPC"
 }
