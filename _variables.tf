@@ -8,6 +8,7 @@ variable "name" {
 }
 
 variable "cf_export_name" {
+  default     = ""
   description = "Name prefix for the export resources of the cloud formation output"
 }
 
