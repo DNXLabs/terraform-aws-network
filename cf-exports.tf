@@ -1,7 +1,7 @@
 resource "aws_cloudformation_stack" "tf_exports" {
   name = "terraform-exports-network-${var.name}"
   template_body = templatefile("${path.module}/cf-exports.yml", {
-    "name" = var.name,
+    "name" = var.cf_export_name != "" ? var.cf_export_name : var.name
     "vars" = {
       "VpcId"              = aws_vpc.default.id,
       "CidrBlock"          = aws_vpc.default.cidr_block,
