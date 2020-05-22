@@ -56,8 +56,7 @@ resource aws_route_table_association "private" {
   route_table_id = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
 
   lifecycle {
-        ignore_changes        = [subnet_id]
-
+    ignore_changes        = [subnet_id]
     create_before_destroy = true
   }
 }
