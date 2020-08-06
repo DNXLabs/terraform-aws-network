@@ -3,7 +3,7 @@
 [![Lint Status](https://github.com/DNXLabs/terraform-aws-network/workflows/Lint/badge.svg)](https://github.com/DNXLabs/terraform-aws-network/actions)
 [![LICENSE](https://img.shields.io/github/license/DNXLabs/terraform-aws-network)](https://github.com/DNXLabs/terraform-aws-network/blob/master/LICENSE)
 
-This terraform module basic network resources for a region.
+This terraform module basic network resources for a region - NEW VERSION.
 
 ## Usage
 
