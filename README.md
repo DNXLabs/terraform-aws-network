@@ -3,7 +3,26 @@
 [![Lint Status](https://github.com/DNXLabs/terraform-aws-network/workflows/Lint/badge.svg)](https://github.com/DNXLabs/terraform-aws-network/actions)
 [![LICENSE](https://img.shields.io/github/license/DNXLabs/terraform-aws-network)](https://github.com/DNXLabs/terraform-aws-network/blob/master/LICENSE)
 
-This terraform module basic network resources for a region - NEW VERSION.
+This module creates the basic network resources for a region.
+
+This module creates:
+ - Virtual Private Cloud (VPC)
+     - Enable DNS Hostname - A DNS hostname is a name that uniquely and absolutely names a computer; it's composed of a host name and a domain name. DNS servers resolve DNS hostnames to their corresponding IP addresses.
+ - VPC Flow Logs
+ - AWS Cloudwatch log groups
+ - Subnets
+     - Public
+     - Private
+     - Secure
+     - Transit
+ - Internet Gateway
+ - Route tables for the Public, Private, Secure and Transit subnets
+ - Associate all Route Tables created to the correct subnet
+ - Nat Gateway
+ - Network Access Control List (NACL) for all subnets
+ - Database Subnet group - Provides an RDS DB subnet group resources
+
+
 
 ## Usage
 
