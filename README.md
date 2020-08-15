@@ -5,7 +5,7 @@
 
 This module creates the basic network resources for a region.
 
-This module creates:
+The following resources will be created:
  - Virtual Private Cloud (VPC)
      - Enable DNS Hostname - A DNS hostname is a name that uniquely and absolutely names a computer; it's composed of a host name and a domain name. DNS servers resolve DNS hostnames to their corresponding IP addresses.
  - VPC Flow Logs
