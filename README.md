@@ -21,6 +21,7 @@ The following resources will be created:
  - Nat Gateway
  - Network Access Control List (NACL) for all subnets
  - Database Subnet group - Provides an RDS DB subnet group resources
+ - S3 VPC endpoint
 
 
 
