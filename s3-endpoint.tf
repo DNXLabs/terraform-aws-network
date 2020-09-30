@@ -13,9 +13,9 @@ resource "aws_vpc_endpoint" "s3" {
     POLICY
 
   lifecycle {
-    ignore_changes = [ policy ]
+    ignore_changes = [policy]
   }
-  
+
   tags = merge(
     var.tags,
     {
@@ -24,6 +24,6 @@ resource "aws_vpc_endpoint" "s3" {
     },
   )
 
-  depends_on = [ aws_vpc.default ]
+  depends_on = [aws_vpc.default]
 
 }

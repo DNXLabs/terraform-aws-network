@@ -57,6 +57,6 @@ resource "aws_route_table_association" "transit" {
 
 resource "aws_vpc_endpoint_route_table_association" "transit" {
   count           = var.transit_subnet ? 1 : 0
-  route_table_id = aws_route_table.transit[0].id
+  route_table_id  = aws_route_table.transit[0].id
   vpc_endpoint_id = aws_vpc_endpoint.s3.id
 }
