@@ -108,6 +108,11 @@ resource "aws_network_acl_rule" "in_public_icmp" {
   cidr_block     = "0.0.0.0/0"
   icmp_type      = 0
   icmp_code      = -1
+    lifecycle {
+     ignore_changes = [
+      icmp_type
+    ]
+  }
 }
 
 resource "aws_network_acl_rule" "in_public_from_private" {
@@ -120,10 +125,4 @@ resource "aws_network_acl_rule" "in_public_from_private" {
   cidr_block     = aws_subnet.private[count.index].cidr_block
   from_port      = 0
   to_port        = 0
-
-    lifecycle {
-    ignore_changes = [
-      icmp_type
-    ]
-  }
 }
