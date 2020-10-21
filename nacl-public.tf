@@ -108,8 +108,8 @@ resource "aws_network_acl_rule" "in_public_icmp" {
   cidr_block     = "0.0.0.0/0"
   icmp_type      = 0
   icmp_code      = -1
-    lifecycle {
-     ignore_changes = [
+  lifecycle {
+    ignore_changes = [
       icmp_type
     ]
   }
