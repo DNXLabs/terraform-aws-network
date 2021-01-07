@@ -96,3 +96,23 @@ variable "vpc_endpoints" {
   default     = []
   description = "AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr)"
 }
+
+variable "kubernetes_clusters" {
+  type        = list(string)
+  default     = []
+  description = "List of kubernetes cluster names to creates tags in public and private subnets of this VPC"
+}
+
+variable "kubernetes_clusters_type" {
+  type        = string
+  default     = "shared"
+  description = "Use either 'owned' or 'shared' for kubernetes cluster tags"
+}
+
+
+locals {
+  kubernetes_clusters = zipmap(
+    formatlist("kubernetes.io/cluster/%s", var.kubernetes_clusters),
+    [for cluster in var.kubernetes_clusters : var.kubernetes_clusters_type]
+  )
+}
