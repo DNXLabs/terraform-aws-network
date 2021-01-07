@@ -57,6 +57,8 @@ module "network" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
+| kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
+| kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |
 | max\_az | Max number of AZs | `number` | `3` | no |
 | multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
 | name | Name prefix for the resources of this stack | `any` | n/a | yes |
