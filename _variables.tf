@@ -94,5 +94,5 @@ variable "vpc_flow_logs_retention" {
 variable "vpc_endpoints" {
   type        = list(string)
   default     = []
-  description = "AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr)" 
+  description = "AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr)"
 }
