@@ -90,3 +90,9 @@ variable "vpc_flow_logs_retention" {
   default     = 365
   description = "Retention in days for VPC Flow Logs CloudWatch Log Group"
 }
+
+variable "vpc_endpoints" {
+  type        = list(string)
+  default     = []
+  description = "AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr)" 
+}
