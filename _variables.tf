@@ -39,7 +39,7 @@ variable "nat_instance" {
 variable "instance_types" {
   description = "Candidates of spot instance type for the NAT instance. This is used in the mixed instances policy"
   type        = list
-  default     = ["t3a.nano", "t3.nano","t3a.micro","t3.micro"]
+  default     = ["t2.micro","t2.small","t3a.nano","t3.nano","t3a.micro","t3.micro"]
 }
 
 variable "newbits" {
@@ -124,7 +124,6 @@ variable "kubernetes_clusters_type" {
   default     = "shared"
   description = "Use either 'owned' or 'shared' for kubernetes cluster tags"
 }
-
 
 locals {
   kubernetes_clusters = zipmap(

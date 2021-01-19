@@ -6,7 +6,6 @@ echo "### Determine the region"
 export AWS_DEFAULT_REGION="$(/opt/aws/bin/ec2-metadata -z | sed 's/placement: \(.*\).$/\1/')"
 
 echo "### Determine the count of EIP id"
-#eip_id="$(aws ec2 describe-addresses --query Addresses[*].AllocationId --filters "Name=tag:Name,Values=EIPforNAT" --output text)"
 eip_id="$(aws ec2 describe-addresses --query Addresses[*].AllocationId --filters "Name=tag:Function,Values=NAT-instance" --output text)"
 
 if [ $(echo "$eip_id" |wc -c) -eq 1 ]; then
@@ -33,7 +32,8 @@ if [ $(echo "$eip_id" |wc -c) -eq 1 ]; then
     done
 else
     echo "### Determine the network id in the zone"
-    eni_id=$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].NetworkInterfaceId --filters "Name=status,Values=available" "Name=tag:Function,Values=NAT-instance" --output text)
+    zone_name="$(/opt/aws/bin/ec2-metadata -z | cut -d' ' -f2)"
+    eni_id=$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].NetworkInterfaceId --filters "Name=status,Values=available" "Name=tag:Function,Values=NAT-instance" "Name=availability-zone,Values=$zone_name" --output text)
 
     aws ec2 attach-network-interface \
       --region "$(/opt/aws/bin/ec2-metadata -z  | sed 's/placement: \(.*\).$/\1/')" \

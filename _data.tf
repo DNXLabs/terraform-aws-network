@@ -1,4 +1,11 @@
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+output "aws_availability_zones" {
+  value       = data.aws_availability_zones.available.names
+  description = "aws_availability_zones"
+}
 
 data "aws_availability_zone" "az" {
   count = length(data.aws_availability_zones.available.names)

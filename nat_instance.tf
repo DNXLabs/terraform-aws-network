@@ -21,7 +21,7 @@ resource "aws_eip" "nat_instance" {
 }
 
 resource "aws_route" "nat_instance" {
-  count                  = length(aws_route_table.private[*].id)
+  count                  = var.nat_instance ? length(aws_route_table.private[*].id) : 0
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = aws_network_interface.nat_instance[count.index].id
@@ -57,7 +57,7 @@ resource "aws_launch_template" "template_linux" {
 resource "aws_autoscaling_group" "nat_instance" {
 #   count               = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) : 1 : var.max_az : 1 : 0
   count = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
-  name                = "nat-${count.index}"
+  name                = "nat_instance-${count.index}"
   capacity_rebalance  = true
   desired_capacity    = 1
   min_size            = 1
@@ -69,7 +69,8 @@ resource "aws_autoscaling_group" "nat_instance" {
     instances_distribution {
       on_demand_base_capacity                  = 0
       on_demand_percentage_above_base_capacity = 0
-      spot_allocation_strategy                 = "capacity-optimized"
+      spot_allocation_strategy                 = var.multi_nat ? "lowest-price" : "capacity-optimized"
+      spot_instance_pools                      = var.multi_nat ? 10 : 0
     }
     launch_template {
       launch_template_specification {
