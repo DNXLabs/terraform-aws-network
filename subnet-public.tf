@@ -15,6 +15,7 @@ resource "aws_subnet" "public" {
       "Name"    = "${var.name}-Subnet-Public-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
       "Scheme"  = "public"
       "EnvName" = var.name
+      "Az"      = "${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
     },
     local.kubernetes_clusters,
     length(var.kubernetes_clusters) != 0 ? { "kubernetes.io/role/elb" = 1 } : {}

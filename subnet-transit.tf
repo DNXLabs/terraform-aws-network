@@ -15,6 +15,7 @@ resource "aws_subnet" "transit" {
       "Name"    = "${var.name}-Subnet-Transit-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
       "Scheme"  = "transit"
       "EnvName" = var.name
+      "Az"      = "${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
     },
   )
 }

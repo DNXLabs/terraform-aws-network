@@ -23,7 +23,12 @@ variable "vpc_cidr_transit" {
 
 variable "multi_nat" {
   default     = false
-  description = "Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT"
+  description = "Number of NAT Gateway, 'true' will yield one per AZ while 'false' creates one NAT"
+}
+
+variable "nat_gw" {
+  default     = true
+  description = "Create a NAT Gateway"
 }
 
 variable "newbits" {
