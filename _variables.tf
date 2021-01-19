@@ -23,12 +23,23 @@ variable "vpc_cidr_transit" {
 
 variable "multi_nat" {
   default     = false
-  description = "Number of NAT Gateway, 'true' will yield one per AZ while 'false' creates one NAT"
+  description = "Number of NAT, 'true' will yield one per AZ while 'false' creates one NAT"
 }
 
 variable "nat_gw" {
   default     = true
-  description = "Create a NAT Gateway"
+  description = "Create a NAT Gateway (Require: nat_instance=false)"
+}
+
+variable "nat_instance" {
+  default     = false
+  description = "Create a NAT Gateway (Require: nat_instance=false )"
+}
+
+variable "instance_types" {
+  description = "Candidates of spot instance type for the NAT instance. This is used in the mixed instances policy"
+  type        = list
+  default     = ["t3a.nano", "t3.nano","t3a.micro","t3.micro"]
 }
 
 variable "newbits" {
