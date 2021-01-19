@@ -14,41 +14,41 @@ data "aws_region" "current" {}
 #   }
 # }
 
-data "aws_subnet_ids" "public" {
-  vpc_id = "${data.aws_vpc.selected.id}"
+# data "aws_subnet_ids" "public" {
+#   vpc_id = "${data.aws_vpc.selected.id}"
 
-  filter {
-    name   = "tag:Scheme"
-    values = ["public"]
-  }
-}
+#   filter {
+#     name   = "tag:Scheme"
+#     values = ["public"]
+#   }
+# }
 
-data "aws_subnet_ids" "private" {
-  vpc_id = "${data.aws_vpc.selected.id}"
+# data "aws_subnet_ids" "private" {
+#   vpc_id = "${data.aws_vpc.selected.id}"
 
-  filter {
-    name   = "tag:Scheme"
-    values = ["private"]
-  }
-}
+#   filter {
+#     name   = "tag:Scheme"
+#     values = ["private"]
+#   }
+# }
 
-data "aws_security_group" "selected" {
-  vpc_id = "${data.aws_vpc.selected.id}"
-  filter {
-    name   = "group-name"
-    values = ["default"]
-  }
-}
+# data "aws_security_group" "selected" {
+#   vpc_id = "${data.aws_vpc.selected.id}"
+#   filter {
+#     name   = "group-name"
+#     values = ["default"]
+#   }
+# }
 
 
-data "aws_route_tables" "routes_private" {
-  vpc_id = "${data.aws_vpc.selected.id}"
+# data "aws_route_tables" "routes_private" {
+#   vpc_id = "${data.aws_vpc.selected.id}"
 
-  filter {
-    name   = "tag:Scheme"
-    values = ["private"]
-  }
-}
+#   filter {
+#     name   = "tag:Scheme"
+#     values = ["private"]
+#   }
+# }
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
