@@ -33,7 +33,7 @@ variable "nat_gw" {
 
 variable "nat_instance" {
   default     = false
-  description = "Create a NAT Gateway (Require: nat_instance=false )"
+  description = "Create a NAT Gateway (Require: nat_gw=false )"
 }
 
 variable "instance_types" {
