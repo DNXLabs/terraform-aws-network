@@ -147,9 +147,10 @@ resource "aws_iam_role_policy" "nat_instance" {
             "Effect": "Allow",
             "Action": [
                 "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeRouteTables",
+                "ec2:DescribeAddresses",
                 "ec2:AttachNetworkInterface",
-                "ec2:ModifyInstanceAttribute",
-                "ec2:DescribeRouteTables"
+                "ec2:ModifyInstanceAttribute"
             ],
             "Resource": "*"
         }
