@@ -5,18 +5,18 @@ echo "### CONFIG NETWORK INTERFACE"
 echo "### Determine the region"
 export AWS_DEFAULT_REGION="$(/opt/aws/bin/ec2-metadata -z | sed 's/placement: \(.*\).$/\1/')"
 
+echo "### Determine the instance id"
+instance_id="$(/opt/aws/bin/ec2-metadata -i | cut -d' ' -f2)"
+
+echo "### Disable source dest check"
+aws ec2 modify-instance-attribute --instance-id "$instance_id" --source-dest-check "{\"Value\": false}"
+
 echo "### Determine the count of EIP id"
 eip_id="$(aws ec2 describe-addresses --query Addresses[*].AllocationId --filters "Name=tag:Function,Values=NAT-instance" --output text)"
 
 if [ $(echo "$eip_id" |wc -c) -eq 1 ]; then
-    echo "### Determine the instance id"
-    instance_id="$(/opt/aws/bin/ec2-metadata -i | cut -d' ' -f2)"
-
     echo "### Attach the EIP"
     aws ec2 associate-address --instance-id "$instance_id" --allocation-id "$eip_id"
-
-    echo "### Disable source dest check"
-    aws ec2 modify-instance-attribute --instance-id "$instance_id" --source-dest-check "{\"Value\": false}"
 
     echo "### Change the private route tables"
     route_tables="$(aws ec2 describe-route-tables --filters "Name=tag:Scheme,Values=private" |grep RouteTableId |cut -d ':' -f2 |sed 's/[\", ]//g' |uniq)"
