@@ -25,6 +25,10 @@ resource "aws_route" "nat_instance" {
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = aws_network_interface.nat_instance[count.index].id
+
+  lifecycle {
+    ignore_changes        = [network_interface_id]
+  }
 }
 
 data "template_file" "userdata" {
@@ -187,7 +191,7 @@ resource "aws_security_group_rule" "ingress" {
   description       = "Allow traffic from Subnet Private"
   security_group_id = aws_security_group.nat_instance[0].id
   type              = "ingress"
-  cidr_blocks       = [aws_subnet.private[count.index].cidr_block]
+  cidr_blocks       = var.multi_nat ? [aws_subnet.private[count.index].cidr_block] : aws_subnet.private[*].cidr_block
   from_port         = 0
   to_port           = 65535
   protocol          = "all"

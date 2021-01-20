@@ -18,6 +18,9 @@ resource "aws_subnet" "transit" {
       "Az"      = "${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
     },
   )
+  lifecycle {
+    ignore_changes        = [tags]
+  }
 }
 
 resource "aws_route_table" "transit" {

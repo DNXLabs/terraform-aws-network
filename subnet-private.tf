@@ -23,6 +23,10 @@ resource "aws_subnet" "private" {
     length(var.kubernetes_clusters) != 0 ? { "kubernetes.io/role/internal-elb" = 1 } : {}
   )
 
+  lifecycle {
+    ignore_changes        = [tags]
+  }
+
   depends_on = [aws_nat_gateway.nat_gw]
 }
 

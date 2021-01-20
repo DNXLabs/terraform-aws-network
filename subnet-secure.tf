@@ -18,7 +18,9 @@ resource "aws_subnet" "secure" {
       "Az"      = "${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
     },
   )
-
+  lifecycle {
+    ignore_changes        = [tags]
+  }
   depends_on = [aws_nat_gateway.nat_gw]
 }
 

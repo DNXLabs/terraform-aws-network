@@ -20,6 +20,10 @@ resource "aws_subnet" "public" {
     local.kubernetes_clusters,
     length(var.kubernetes_clusters) != 0 ? { "kubernetes.io/role/elb" = 1 } : {}
   )
+
+  lifecycle {
+    ignore_changes        = [tags]
+  }
 }
 
 resource "aws_route_table" "public" {
