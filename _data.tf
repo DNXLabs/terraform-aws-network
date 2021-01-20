@@ -14,6 +14,7 @@ data "aws_availability_zone" "az" {
 
 data "aws_region" "current" {}
 
+# AMI of the latest Amazon Linux 2 
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -27,6 +28,14 @@ data "aws_ami" "amazon_linux" {
   }
   filter {
     name   = "name"
-    values = ["amzn-ami-vpc-nat*"]
+    values = ["amzn2-ami-hvm-*"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "block-device-mapping.volume-type"
+    values = ["gp2"]
   }
 }

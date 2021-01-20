@@ -151,7 +151,8 @@ resource "aws_iam_role_policy" "nat_instance" {
                 "ec2:DescribeRouteTables",
                 "ec2:DescribeAddresses",
                 "ec2:AttachNetworkInterface",
-                "ec2:ModifyInstanceAttribute"
+                "ec2:ModifyInstanceAttribute",
+                "ec2:AssociateAddress"
             ],
             "Resource": "*"
         }
@@ -177,7 +178,7 @@ resource "aws_security_group_rule" "egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   to_port           = 65535
-  protocol          = "tcp"
+  protocol          = "all"
 }
 
 resource "aws_security_group_rule" "ingress" {
