@@ -14,7 +14,7 @@ aws ec2 modify-instance-attribute --instance-id "$instance_id" --source-dest-che
 echo "### Determine the count of EIP id"
 eip_id="$(aws ec2 describe-addresses --query Addresses[*].AllocationId --filters "Name=tag:Function,Values=NAT-instance" --output text)"
 
-if [ $(echo "$eip_id" |wc -c) -eq 1 ]; then
+if [ $(echo "$eip_id" |wc -w) -eq 1 ]; then
     echo "### Attach the EIP"
     aws ec2 associate-address --instance-id "$instance_id" --allocation-id "$eip_id"
 
