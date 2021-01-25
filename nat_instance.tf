@@ -103,13 +103,13 @@ resource "aws_autoscaling_group" "nat_instance" {
 
 resource "aws_iam_instance_profile" "nat_instance" {
   count = var.nat_instance ? 1 : 0
-  name  = "profile_nat_instance"
+  name  = "${var.name}-nat_instance"
   role  = aws_iam_role.nat_instance[0].name
 }
 
 resource "aws_iam_role" "nat_instance" {
   count = var.nat_instance ? 1 : 0
-  name        = "nat_instance"
+  name        = "${var.name}-nat_instance"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -135,7 +135,7 @@ resource "aws_iam_role_policy_attachment" "nat_instance" {
 resource "aws_iam_role_policy" "nat_instance" {
   count = var.nat_instance ? 1 : 0
   role        = aws_iam_role.nat_instance[0].name
-  name        = "nat_instance"
+  name        = "${var.name}-nat_instance"
   policy      = <<EOF
 {
     "Version": "2012-10-17",
