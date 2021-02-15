@@ -51,3 +51,19 @@ output "nat_gateway_ids" {
 output "db_subnet_group_id" {
   value = aws_db_subnet_group.secure.id
 }
+
+output "public_route_table_id" {
+  value = aws_route_table.public.id
+}
+
+output "private_route_table_id" {
+  value = [aws_route_table.private.*.id]
+}
+
+output "secure_route_table_id" {
+  value = aws_route_table.secure.id
+}
+
+output "transit_route_table_id" {
+  value = [aws_route_table.transit.*.id]
+}
