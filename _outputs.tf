@@ -57,7 +57,7 @@ output "public_route_table_id" {
 }
 
 output "private_route_table_id" {
-  value = [aws_route_table.private.*.id]
+  value = aws_route_table.private.*.id
 }
 
 output "secure_route_table_id" {
@@ -65,7 +65,7 @@ output "secure_route_table_id" {
 }
 
 output "transit_route_table_id" {
-  value = [aws_route_table.transit.*.id]
+  value = aws_route_table.transit.*.id
 }
 
 output "public_nacl_id" {
@@ -81,5 +81,5 @@ output "secure_nacl_id" {
 }
 
 output "transit_nacl_id" {
-  value = [aws_network_acl.transit.*.id]
+  value = aws_network_acl.transit.*.id
 }
