@@ -67,3 +67,19 @@ output "secure_route_table_id" {
 output "transit_route_table_id" {
   value = [aws_route_table.transit.*.id]
 }
+
+output "public_nacl_id" {
+  value = aws_network_acl.public.id
+}
+
+output "private_nacl_id" {
+  value = aws_network_acl.private.id
+}
+
+output "secure_nacl_id" {
+  value = aws_network_acl.secure.id
+}
+
+output "transit_nacl_id" {
+  value = [aws_network_acl.transit.*.id]
+}
