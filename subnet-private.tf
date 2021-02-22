@@ -52,7 +52,7 @@ resource "aws_route" "nat_route" {
   depends_on = [aws_nat_gateway.nat_gw]
 }
 
-resource aws_route_table_association "private" {
+resource "aws_route_table_association" "private" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
