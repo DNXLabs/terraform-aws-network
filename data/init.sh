@@ -52,16 +52,27 @@ if [ $(echo "$eip_id" |wc -w) -eq 1 ]; then
 
 else
     echo "### Determine the network id in the zone"
+    timeout=600
+    time_count=0
     zone_name="$(/opt/aws/bin/ec2-metadata -z | cut -d' ' -f2)"
     eni_id=$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].NetworkInterfaceId --filters "Name=status,Values=available" "Name=tag:Function,Values=NAT-instance" "Name=availability-zone,Values=$zone_name" --output text)
-
+    
+    while [ -z $eni_id ]; do
+        let time_count++
+        sleep 1
+        eni_id=$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].NetworkInterfaceId --filters "Name=status,Values=available" "Name=tag:Function,Values=NAT-instance" "Name=availability-zone,Values=$zone_name" --output text)
+        if [ $time_count -eq $timeout ]; then
+            echo "No network interface available to instance"
+            shutdown -h now
+        fi
+    done
+    
     echo "### Attach network interface"
     aws ec2 attach-network-interface \
       --region "$(/opt/aws/bin/ec2-metadata -z  | sed 's/placement: \(.*\).$/\1/')" \
       --instance-id "$(/opt/aws/bin/ec2-metadata -i | cut -d' ' -f2)" \
       --device-index 1 \
       --network-interface-id "$eni_id"
-
 
     while ! ip link show dev eth1; do
         sleep 1
