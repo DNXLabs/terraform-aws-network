@@ -36,6 +36,11 @@ variable "nat_instance" {
   description = "Create a NAT Gateway (Require: nat_gw=false )"
 }
 
+variable "nat_architecture" {
+  default     = arm64
+  description = "Architecture type of instance"
+}
+
 variable "instance_types" {
   description = "Candidates of spot instance type for the NAT instance. This is used in the mixed instances policy"
   type        = list
