@@ -37,7 +37,7 @@ variable "nat_instance" {
 }
 
 variable "nat_architecture" {
-  default     = arm64
+  default     = ["arm64"]
   description = "Architecture type of instance"
 }
 
