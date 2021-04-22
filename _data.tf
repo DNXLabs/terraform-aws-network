@@ -20,7 +20,7 @@ data "aws_ami" "amazon_linux" {
   owners      = ["amazon"]
   filter {
     name   = "architecture"
-    values = ["arm64"]
+    values = var.nat_architecture
   }
   filter {
     name   = "root-device-type"
