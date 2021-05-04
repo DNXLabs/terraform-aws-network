@@ -18,7 +18,7 @@ The following resources will be created:
  - Internet Gateway
  - Route tables for the Public, Private, Secure and Transit subnets
  - Associate all Route Tables created to the correct subnet
- - Nat Gateway
+ - Option to create Nat Gateway or Nat instance
  - Network Access Control List (NACL) for all subnets
  - Database Subnet group - Provides an RDS DB subnet group resources
  - S3 VPC endpoint
@@ -51,17 +51,22 @@ module "network" {
 | Name | Version |
 |------|---------|
 | aws | n/a |
+| template | n/a |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
+| instance\_types | Candidates of spot instance type for the NAT instance. This is used in the mixed instances policy | `list` | <pre>[<br>  "t4g.micro",<br>  "t4g.small",<br>  "t4g.medium"<br>]</pre> | no |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |
 | max\_az | Max number of AZs | `number` | `3` | no |
-| multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
+| multi\_nat | Number of NAT, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
 | name | Name prefix for the resources of this stack | `any` | n/a | yes |
+| nat\_architecture | Architecture type of instance | `list` | <pre>[<br>  "arm64"<br>]</pre> | no |
+| nat\_gw | Create a NAT Gateway (Require: nat\_instance=false) | `bool` | `true` | no |
+| nat\_instance | Create a NAT Gateway (Require: nat\_gw=false ) | `bool` | `false` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
 | public\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "80",<br>  "443",<br>  "22",<br>  "1194"<br>]</pre> | no |
@@ -76,12 +81,14 @@ module "network" {
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
 | vpc\_endpoints | AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
+| vpc\_flow\_log | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| aws\_availability\_zones | aws\_availability\_zones |
 | cidr\_block | CIDR for VPC created |
 | db\_subnet\_group\_id | n/a |
 | internet\_gateway\_id | ID of Internet Gateway created |
