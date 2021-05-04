@@ -86,6 +86,11 @@ variable "transit_nacl_inbound_udp_ports" {
   description = "UDP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty)"
 }
 
+variable "vpc_flow_logs" {
+  default     = true
+  description = "Enable or disable VPC Flow Logs"
+}
+
 variable "vpc_flow_logs_retention" {
   default     = 365
   description = "Retention in days for VPC Flow Logs CloudWatch Log Group"
