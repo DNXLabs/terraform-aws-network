@@ -76,6 +76,7 @@ module "network" {
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
 | vpc\_endpoints | AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
+| vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 
 ## Outputs
