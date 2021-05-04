@@ -32,7 +32,7 @@ resource "aws_route" "nat_instance" {
 }
 
 data "template_file" "userdata" {
-  template = "${file("${path.module}/data/init.sh")}"
+  template = file("${path.module}/data/init.sh")
 }
 
 resource "aws_launch_template" "template_linux" {
