@@ -7,7 +7,7 @@ resource "aws_flow_log" "vpc" {
 }
 
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
-  count             = var.vpc_flow_log ? 1 : 0
+  count             = var.vpc_flow_logs ? 1 : 0
   name              = "/aws/vpc/${var.name}-VPC/flow-logs"
   retention_in_days = var.vpc_flow_logs_retention
 
