@@ -107,7 +107,7 @@ variable "transit_nacl_inbound_udp_ports" {
   description = "UDP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty)"
 }
 
-variable "vpc_flow_log" {
+variable "vpc_flow_logs" {
   default     = true
   description = "Enable or disable VPC Flow Logs"
 }
