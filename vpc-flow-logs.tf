@@ -1,7 +1,7 @@
 resource "aws_flow_log" "vpc" {
   count           = var.vpc_flow_log ? 1 : 0
-  iam_role_arn    = aws_iam_role.vpc_flow_logs.arn
-  log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  iam_role_arn    = aws_iam_role.vpc_flow_logs[0].arn
+  log_destination = aws_cloudwatch_log_group.vpc_flow_logs[0].arn
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.default.id
 }
@@ -53,7 +53,7 @@ EOF
 resource "aws_iam_role_policy" "vpc_flow_log" {
   count = var.vpc_flow_log ? 1 : 0
   name  = "${var.name}-${data.aws_region.current.name}-VPC-flow-logs"
-  role  = aws_iam_role.vpc_flow_logs.id
+  role  = aws_iam_role.vpc_flow_logs[0].id
 
   policy = <<EOF
 {
