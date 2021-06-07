@@ -5,11 +5,11 @@ resource "aws_network_acl" "transit" {
 
   tags = merge(
     var.tags,
-    map(
-      "Name", "${var.name}-ACL-Transit",
-      "Scheme", "transit",
-      "EnvName", var.name
-    )
+    tomap({
+      "Name" = "${var.name}-ACL-Transit",
+      "Scheme" = "transit",
+      "EnvName" = var.name
+    })
   )
 }
 
