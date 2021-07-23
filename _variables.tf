@@ -23,7 +23,28 @@ variable "vpc_cidr_transit" {
 
 variable "multi_nat" {
   default     = false
-  description = "Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT"
+  description = "Number of NAT, 'true' will yield one per AZ while 'false' creates one NAT"
+}
+
+variable "nat_gw" {
+  default     = true
+  description = "Create a NAT Gateway (Require: nat_instance=false)"
+}
+
+variable "nat_instance" {
+  default     = false
+  description = "Create a NAT Gateway (Require: nat_gw=false )"
+}
+
+variable "nat_architecture" {
+  default     = ["arm64"]
+  description = "Architecture type of instance"
+}
+
+variable "instance_types" {
+  description = "Candidates of spot instance type for the NAT instance. This is used in the mixed instances policy"
+  type        = list(any)
+  default     = ["t4g.micro", "t4g.small", "t4g.medium"]
 }
 
 variable "newbits" {
@@ -113,7 +134,6 @@ variable "kubernetes_clusters_type" {
   default     = "shared"
   description = "Use either 'owned' or 'shared' for kubernetes cluster tags"
 }
-
 
 locals {
   kubernetes_clusters = zipmap(

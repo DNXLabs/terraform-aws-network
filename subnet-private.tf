@@ -17,10 +17,15 @@ resource "aws_subnet" "private" {
       "Name"    = "${var.name}-Subnet-Private-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
       "Scheme"  = "private"
       "EnvName" = var.name
+      "Az"      = upper(data.aws_availability_zone.az[count.index].name_suffix)
     },
     local.kubernetes_clusters,
     length(var.kubernetes_clusters) != 0 ? { "kubernetes.io/role/internal-elb" = 1 } : {}
   )
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 
   depends_on = [aws_nat_gateway.nat_gw]
 }
@@ -40,7 +45,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "nat_route" {
-  count                  = var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1
+  count                  = var.nat_gw ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
