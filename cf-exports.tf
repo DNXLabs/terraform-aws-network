@@ -13,7 +13,7 @@ resource "aws_cloudformation_stack" "tf_exports" {
       "SecureSubnetIds"    = join(",", aws_subnet.secure.*.id),
       "SecureSubnetCidrs"  = join(",", aws_subnet.secure.*.cidr_block),
       #"NatGatewayIds"      = join(",", aws_nat_gateway.nat_gw.*.id),
-      "DbSubnetGroupId"    = aws_db_subnet_group.secure.id
+      "DbSubnetGroupId" = aws_db_subnet_group.secure.id
     }
   })
 }

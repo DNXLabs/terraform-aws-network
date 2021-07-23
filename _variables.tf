@@ -43,8 +43,8 @@ variable "nat_architecture" {
 
 variable "instance_types" {
   description = "Candidates of spot instance type for the NAT instance. This is used in the mixed instances policy"
-  type        = list
-  default     = ["t4g.micro","t4g.small","t4g.medium"]
+  type        = list(any)
+  default     = ["t4g.micro", "t4g.small", "t4g.medium"]
 }
 
 variable "newbits" {

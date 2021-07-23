@@ -5,17 +5,17 @@ resource "aws_network_interface" "nat_instance" {
   subnet_id         = aws_subnet.public[count.index].id
   source_dest_check = false
   description       = "ENI for NAT instance ${count.index}"
-  tags  = {
-    Name = "nat-instance-${count.index}"
+  tags = {
+    Name     = "nat-instance-${count.index}"
     Function = "NAT-instance"
   }
 }
 
 resource "aws_eip" "nat_instance" {
-  count = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
+  count             = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
   network_interface = var.multi_nat ? aws_network_interface.nat_instance[count.index].id : null
-  tags  = {
-    Name = "EIPforNAT_Instance-${count.index}"
+  tags = {
+    Name     = "EIPforNAT_Instance-${count.index}"
     Function = "NAT-instance"
   }
 }
@@ -27,7 +27,7 @@ resource "aws_route" "nat_instance" {
   network_interface_id   = aws_network_interface.nat_instance[count.index].id
 
   lifecycle {
-    ignore_changes        = [network_interface_id]
+    ignore_changes = [network_interface_id]
   }
 }
 
@@ -36,9 +36,9 @@ data "template_file" "userdata" {
 }
 
 resource "aws_launch_template" "template_linux" {
-  count       = var.nat_instance ? 1 : 0
-  name        = "lt-nat_instance"
-  image_id    = data.aws_ami.amazon_linux.id
+  count    = var.nat_instance ? 1 : 0
+  name     = "lt-nat_instance"
+  image_id = data.aws_ami.amazon_linux.id
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.nat_instance[0].arn
@@ -49,7 +49,7 @@ resource "aws_launch_template" "template_linux" {
     security_groups             = [aws_security_group.nat_instance[0].id]
     delete_on_termination       = true
   }
-  
+
   user_data = base64encode(data.template_file.userdata.rendered)
 
   description = "Launch template for NAT instance ${var.name}"
@@ -59,15 +59,15 @@ resource "aws_launch_template" "template_linux" {
 }
 
 resource "aws_autoscaling_group" "nat_instance" {
-#   count               = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) : 1 : var.max_az : 1 : 0
-  count = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
+  #   count               = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) : 1 : var.max_az : 1 : 0
+  count               = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
   name                = "nat_instance-${count.index}"
   capacity_rebalance  = true
   desired_capacity    = 1
   min_size            = 1
   max_size            = 1
   vpc_zone_identifier = var.multi_nat ? [aws_subnet.public[count.index].id] : aws_subnet.public[*].id
-  
+
 
   mixed_instances_policy {
     instances_distribution {
@@ -108,8 +108,8 @@ resource "aws_iam_instance_profile" "nat_instance" {
 }
 
 resource "aws_iam_role" "nat_instance" {
-  count = var.nat_instance ? 1 : 0
-  name        = "${var.name}-nat_instance"
+  count              = var.nat_instance ? 1 : 0
+  name               = "${var.name}-nat_instance"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -127,16 +127,16 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "nat_instance" {
-  count = var.nat_instance ? 1 : 0
+  count      = var.nat_instance ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.nat_instance[0].name
 }
 
 resource "aws_iam_role_policy" "nat_instance" {
-  count = var.nat_instance ? 1 : 0
-  role        = aws_iam_role.nat_instance[0].name
-  name        = "${var.name}-nat_instance"
-  policy      = <<EOF
+  count  = var.nat_instance ? 1 : 0
+  role   = aws_iam_role.nat_instance[0].name
+  name   = "${var.name}-nat_instance"
+  policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -166,17 +166,17 @@ EOF
 }
 
 resource "aws_security_group" "nat_instance" {
-  count = var.nat_instance ? 1 : 0
+  count       = var.nat_instance ? 1 : 0
   name_prefix = var.name
   vpc_id      = aws_vpc.default.id
   description = "Security group for NAT instance ${var.name}"
-  tags  = {
+  tags = {
     Name = "nat-instance"
   }
 }
 
 resource "aws_security_group_rule" "egress" {
-  count = var.nat_instance ? 1 : 0
+  count             = var.nat_instance ? 1 : 0
   security_group_id = aws_security_group.nat_instance[0].id
   type              = "egress"
   cidr_blocks       = ["0.0.0.0/0"]
@@ -186,8 +186,8 @@ resource "aws_security_group_rule" "egress" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-#   count             = var.nat_instance ? var.multi_nat ? length(aws_subnet.private.*.cidr_block) : 1 : 0
-  count = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
+  #   count             = var.nat_instance ? var.multi_nat ? length(aws_subnet.private.*.cidr_block) : 1 : 0
+  count             = var.nat_instance ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
   description       = "Allow traffic from Subnet Private"
   security_group_id = aws_security_group.nat_instance[0].id
   type              = "ingress"
