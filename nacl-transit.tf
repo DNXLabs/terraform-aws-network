@@ -139,3 +139,31 @@ resource "aws_network_acl_rule" "in_transit_from_secure" {
   from_port      = 0
   to_port        = 0
 }
+
+
+#############
+# S3 Endpoint
+#############
+resource "aws_network_acl_rule" "in_private_from_s3" {
+  count          = var.vpc_endpoint_s3_gateway ? length(data.aws_ec2_managed_prefix_list.s3.entries) : 0
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 801
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = tolist(data.aws_ec2_managed_prefix_list.s3.entries)[count.index].cidr
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_private_to_s3" {
+  count          = var.vpc_endpoint_s3_gateway ? length(data.aws_ec2_managed_prefix_list.s3.entries) : 0
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 801
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = tolist(data.aws_ec2_managed_prefix_list.s3.entries)[count.index].cidr
+  from_port      = 0
+  to_port        = 0
+}
