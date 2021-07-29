@@ -4,8 +4,8 @@ resource "aws_vpc_endpoint" "default" {
   vpc_id              = aws_vpc.default.id
   service_name        = "com.amazonaws.${data.aws_region.current.name}.${var.vpc_endpoints[count.index]}"
   vpc_endpoint_type   = "Interface"
-  private_dns_enabled = true
-  subnet_ids          = [aws_subnet.public[0].id, aws_subnet.public[1].id]
+  private_dns_enabled = var.vpc_endpoints[count.index] == "s3" ? false : true
+  subnet_ids          = aws_subnet.private[*].id
 
   security_group_ids = [
     aws_security_group.vpc_endpoints[count.index].id,
@@ -39,13 +39,6 @@ resource "aws_security_group" "vpc_endpoints" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [var.vpc_cidr]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {

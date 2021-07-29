@@ -96,16 +96,28 @@ variable "vpc_flow_logs_retention" {
   description = "Retention in days for VPC Flow Logs CloudWatch Log Group"
 }
 
+variable "vpc_endpoint_s3_gateway" {
+  type        = bool
+  default     = true
+  description = "Enable or disable VPC Endpoint for S3 Gateway"
+}
+
 variable "vpc_endpoints" {
   type        = list(string)
   default     = []
-  description = "AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr)"
+  description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
 }
 
 variable "kubernetes_clusters" {
   type        = list(string)
   default     = []
   description = "List of kubernetes cluster names to creates tags in public and private subnets of this VPC"
+}
+
+variable "kubernetes_clusters_secure" {
+  type        = list(string)
+  default     = []
+  description = "List of kubernetes cluster names to creates tags in secure subnets of this VPC"
 }
 
 variable "kubernetes_clusters_type" {
@@ -119,5 +131,9 @@ locals {
   kubernetes_clusters = zipmap(
     formatlist("kubernetes.io/cluster/%s", var.kubernetes_clusters),
     [for cluster in var.kubernetes_clusters : var.kubernetes_clusters_type]
+  )
+  kubernetes_clusters_secure = zipmap(
+    formatlist("kubernetes.io/cluster/%s", var.kubernetes_clusters_secure),
+    [for cluster in var.kubernetes_clusters_secure : var.kubernetes_clusters_type]
   )
 }
