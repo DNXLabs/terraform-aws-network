@@ -58,6 +58,7 @@ module "network" {
 |------|-------------|------|---------|:--------:|
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
+| kubernetes\_clusters\_secure | List of kubernetes cluster names to creates tags in secure subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |
 | max\_az | Max number of AZs | `number` | `3` | no |
 | multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
@@ -75,7 +76,8 @@ module "network" {
 | transit\_subnet | Create a transit subnet for VPC peering (only central account) | `bool` | `false` | no |
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
-| vpc\_endpoints | AWS services to create a VPC endpoint for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
+| vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
+| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 
