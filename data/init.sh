@@ -45,7 +45,7 @@ if [ $(echo "$eip_id" |wc -w) -eq 1 ]; then
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
        
     echo "### wait for network connection"
-    curl --retry 20 http://www.example.com
+    curl --retry 20 http://www.google.com
     
     echo "### reestablish connections"
     systemctl restart amazon-ssm-agent
@@ -87,7 +87,7 @@ else
     ip route del default dev eth0
 
     echo "### wait for network connection"
-    curl --retry 20 http://www.example.com
+    curl --retry 20 http://www.google.com
 
     echo "### reestablish connections"
     systemctl restart amazon-ssm-agent
