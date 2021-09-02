@@ -65,7 +65,7 @@ variable "transit_subnet" {
 variable "public_nacl_inbound_tcp_ports" {
   type        = list(string)
   default     = ["80", "443", "22", "1194"]
-  description = "TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
+  description = "TCP Ports to allow inbound on public subnet via NACLs"
 }
 
 variable "public_nacl_outbound_tcp_ports" {
@@ -77,7 +77,7 @@ variable "public_nacl_outbound_tcp_ports" {
 variable "public_nacl_inbound_udp_ports" {
   type        = list(string)
   default     = []
-  description = "UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty)"
+  description = "UDP Ports to allow inbound on public subnet via NACLs"
 }
 
 variable "public_nacl_outbound_udp_ports" {
@@ -102,6 +102,30 @@ variable "transit_nacl_inbound_udp_ports" {
   type        = list(string)
   default     = ["1194"]
   description = "UDP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty)"
+}
+
+variable "private_nacl_inbound_tcp_ports" {
+  type        = list(string)
+  default     = [0]
+  description = "TCP ports that private subnets expose for the public subnets (use [0] to allow all ports)"
+}
+
+variable "secure_nacl_inbound_tcp_ports" {
+  type        = list(string)
+  default     = [0]
+  description = "TCP ports that secure subnets expose for the private subnets (use [0] to allow all ports)"
+}
+
+variable "private_nacl_inbound_udp_ports" {
+  type        = list(string)
+  default     = []
+  description = "UDP ports that private subnets expose for the public subnets (use [0] to allow all ports)"
+}
+
+variable "secure_nacl_inbound_udp_ports" {
+  type        = list(string)
+  default     = [0]
+  description = "UDP ports that secure subnets expose for the private subnets (use [0] to allow all ports)"
 }
 
 variable "vpc_flow_logs" {

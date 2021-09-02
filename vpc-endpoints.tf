@@ -5,7 +5,7 @@ resource "aws_vpc_endpoint" "default" {
   service_name        = "com.amazonaws.${data.aws_region.current.name}.${var.vpc_endpoints[count.index]}"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = var.vpc_endpoints[count.index] == "s3" ? false : true
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.secure[*].id
 
   security_group_ids = [
     aws_security_group.vpc_endpoints[count.index].id,
@@ -18,13 +18,12 @@ resource "aws_vpc_endpoint" "default" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-${var.vpc_endpoints[count.index]}-Endpoint"
+      "Name"    = "${var.name}-${var.vpc_endpoints[count.index]}-Endpoint-Private"
       "EnvName" = var.name
     },
   )
 
   depends_on = [aws_vpc.default]
-
 }
 
 resource "aws_security_group" "vpc_endpoints" {

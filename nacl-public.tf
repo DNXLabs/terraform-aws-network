@@ -152,14 +152,14 @@ resource "aws_network_acl_rule" "out_public_icmp" {
   icmp_code      = -1
 }
 
-resource "aws_network_acl_rule" "in_public_from_private" {
+resource "aws_network_acl_rule" "in_public_from_private_tcp_return" {
   count          = length(aws_subnet.private.*.cidr_block)
   network_acl_id = aws_network_acl.public.id
   rule_number    = count.index + 601
   egress         = false
-  protocol       = -1
+  protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = aws_subnet.private[count.index].cidr_block
-  from_port      = 0
-  to_port        = 0
+  from_port      = "1024"
+  to_port        = "65535"
 }
