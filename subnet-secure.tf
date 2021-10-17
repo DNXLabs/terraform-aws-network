@@ -12,9 +12,11 @@ resource "aws_subnet" "secure" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-Subnet-Secure-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
-      "Scheme"  = "secure"
-      "EnvName" = var.name
+      "Name"                = "${var.name}-Subnet-Secure-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Scheme"              = "secure"
+      "EnvName"             = var.name
+      "aws-cdk:subnet-name" = "Secure"
+      "aws-cdk:subnet-type" = "Isolated"
     },
     local.kubernetes_clusters_secure,
     length(var.kubernetes_clusters_secure) != 0 ? { "kubernetes.io/role/internal-elb" = 1 } : {}

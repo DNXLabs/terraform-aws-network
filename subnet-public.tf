@@ -12,9 +12,11 @@ resource "aws_subnet" "public" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-Subnet-Public-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
-      "Scheme"  = "public"
-      "EnvName" = var.name
+      "Name"                = "${var.name}-Subnet-Public-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Scheme"              = "public"
+      "EnvName"             = var.name
+      "aws-cdk:subnet-name" = "Public"
+      "aws-cdk:subnet-type" = "Public"
     },
     local.kubernetes_clusters,
     length(var.kubernetes_clusters) != 0 ? { "kubernetes.io/role/elb" = 1 } : {}
