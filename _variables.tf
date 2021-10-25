@@ -21,6 +21,11 @@ variable "vpc_cidr_transit" {
   description = "Network CIDR for Transit subnets"
 }
 
+variable "nat" {
+  default     = true
+  description = "Deploy NAT instance(s)"
+}
+
 variable "multi_nat" {
   default     = false
   description = "Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT"
