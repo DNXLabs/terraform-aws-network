@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_eip" "nat_eip" {
-  count =  var.byoip ? 0 : local.nat_quantity
+  count = var.byoip ? 0 : local.nat_quantity
   vpc   = true
 
   tags = merge(
