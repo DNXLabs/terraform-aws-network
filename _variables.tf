@@ -133,7 +133,8 @@ variable "byoip" {
 }
 
 variable "eip_allocation_id" {
-  type        = string
+  type        = list(string)
+  default     = []
   description = "User-specified primary or secondary private IP address to associate with the Elastic IP address"
 }
 
