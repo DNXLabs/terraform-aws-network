@@ -88,21 +88,30 @@ module "network" {
 | cidr\_block | CIDR for VPC created |
 | db\_subnet\_group\_id | n/a |
 | internet\_gateway\_id | ID of Internet Gateway created |
+| nat\_gateway | n/a |
 | nat\_gateway\_ids | List of NAT Gateway IDs |
 | private\_nacl\_id | n/a |
+| private\_nacls | n/a |
 | private\_route\_table\_id | n/a |
 | private\_subnet\_cidrs | List of private subnet CIDRs |
 | private\_subnet\_ids | List of private subnet IDs |
+| private\_subnets | n/a |
 | public\_nacl\_id | n/a |
+| public\_nacls | n/a |
 | public\_route\_table\_id | n/a |
 | public\_subnet\_cidrs | List of public subnet CIDRs |
 | public\_subnet\_ids | List of public subnet IDs |
+| public\_subnets | n/a |
+| secure\_db\_subnet | n/a |
 | secure\_nacl\_id | n/a |
+| secure\_nacls | n/a |
 | secure\_route\_table\_id | n/a |
 | secure\_subnet\_cidrs | List of secure subnet CIDRs |
 | secure\_subnet\_ids | List of secure subnet IDs |
+| secure\_subnets | n/a |
 | transit\_nacl\_id | n/a |
 | transit\_route\_table\_id | n/a |
+| transit\_subnets | n/a |
 | vpc\_id | ID for VPC created |
 
 <!--- END_TF_DOCS --->
