@@ -17,7 +17,7 @@ resource "aws_eip" "nat_eip" {
 
 resource "aws_nat_gateway" "nat_gw" {
   count         = local.nat_quantity
-  allocation_id = var.byoip ? var.eip_allocation_id[count.index] : aws_eip.nat_eip[count.index].id
+  allocation_id = var.byoip ? var.eip_allocation_ids[count.index] : aws_eip.nat_eip[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = merge(

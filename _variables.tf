@@ -132,7 +132,7 @@ variable "byoip" {
   description = "Enable EC2 Bring your own IP (BYOIP) pool"
 }
 
-variable "eip_allocation_id" {
+variable "eip_allocation_ids" {
   type        = list(string)
   default     = []
   description = "User-specified primary or secondary private IP address to associate with the Elastic IP address"
