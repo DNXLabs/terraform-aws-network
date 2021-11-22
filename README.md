@@ -63,10 +63,14 @@ module "network" {
 | max\_az | Max number of AZs | `number` | `3` | no |
 | multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
 | name | Name prefix for the resources of this stack | `any` | n/a | yes |
+| nat | Deploy NAT instance(s) | `bool` | `true` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
+| public\_nacl\_icmp | Allows ICMP traffic to and from the public subnet | `bool` | `true` | no |
 | public\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "80",<br>  "443",<br>  "22",<br>  "1194"<br>]</pre> | no |
 | public\_nacl\_inbound\_udp\_ports | UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | `[]` | no |
+| public\_nacl\_outbound\_tcp\_ports | TCP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
+| public\_nacl\_outbound\_udp\_ports | UDP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
 | public\_netnum\_offset | Start with this subnet for public ones, plus number of AZs | `number` | `0` | no |
 | secure\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `10` | no |
 | tags | Extra tags to attach to resources | `map(string)` | `{}` | no |
