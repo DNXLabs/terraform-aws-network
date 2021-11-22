@@ -128,10 +128,10 @@ output "private_nacls" {
     "egress" : {
       "out_private_to_world_tcp" : aws_network_acl_rule.out_private_to_world_tcp
       "out_private_to_world_udp" : aws_network_acl_rule.out_private_to_world_udp
-      "out_private_from_world_icmp": aws_network_acl_rule.out_private_from_world_icmp
-      "out_private_from_private": aws_network_acl_rule.out_private_from_private
-      "out_private_from_public": aws_network_acl_rule.out_private_from_public
-      "out_private_from_secure": aws_network_acl_rule.out_private_from_secure
+      "out_private_from_world_icmp" : aws_network_acl_rule.out_private_from_world_icmp
+      "out_private_from_private" : aws_network_acl_rule.out_private_from_private
+      "out_private_from_public" : aws_network_acl_rule.out_private_from_public
+      "out_private_from_secure" : aws_network_acl_rule.out_private_from_secure
     }
     "ingress" : {
       "in_private_from_world_tcp_return" : aws_network_acl_rule.in_private_from_world_tcp_return

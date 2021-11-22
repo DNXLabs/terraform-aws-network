@@ -26,7 +26,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_route_table" "private" {
-  count  = var.nat && var.multi_nat ? (
+  count = var.nat && var.multi_nat ? (
     length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)
   ) : 1
   vpc_id = aws_vpc.default.id
