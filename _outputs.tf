@@ -102,52 +102,52 @@ output "transit_subnets" {
 
 output "public_nacls" {
   value = {
-    "acl": aws_network_acl.private
-    "egress": {
-      "out_public_world": aws_network_acl_rule.out_public_world
+    "acl" : aws_network_acl.private
+    "egress" : {
+      "out_public_world" : aws_network_acl_rule.out_public_world
     }
-    "ingress": {
-      "in_public_local": aws_network_acl_rule.in_public_local
-      "in_public_tcp": aws_network_acl_rule.in_public_tcp
-      "in_public_tcp_return": aws_network_acl_rule.in_public_tcp_return
-      "in_public_udp": aws_network_acl_rule.in_public_udp
-      "in_public_udp_return": aws_network_acl_rule.in_public_udp_return
-      "in_public_icmp": aws_network_acl_rule.in_public_icmp
-      "in_public_from_private": aws_network_acl_rule.in_public_from_private
+    "ingress" : {
+      "in_public_local" : aws_network_acl_rule.in_public_local
+      "in_public_tcp" : aws_network_acl_rule.in_public_tcp
+      "in_public_tcp_return" : aws_network_acl_rule.in_public_tcp_return
+      "in_public_udp" : aws_network_acl_rule.in_public_udp
+      "in_public_udp_return" : aws_network_acl_rule.in_public_udp_return
+      "in_public_icmp" : aws_network_acl_rule.in_public_icmp
+      "in_public_from_private" : aws_network_acl_rule.in_public_from_private
     }
   }
 }
 
 output "private_nacls" {
   value = {
-    "acl": aws_network_acl.private
-    "egress": {
-      "out_private_to_world": aws_network_acl_rule.out_private_to_world
+    "acl" : aws_network_acl.private
+    "egress" : {
+      "out_private_to_world" : aws_network_acl_rule.out_private_to_world
     }
-    "ingress": {
-      "in_private_from_world_tcp": aws_network_acl_rule.in_private_from_world_tcp
-      "in_private_from_world_icmp_reply": aws_network_acl_rule.in_private_from_world_icmp_reply
-      "in_private_from_private": aws_network_acl_rule.in_private_from_private
-      "in_private_from_public": aws_network_acl_rule.in_private_from_public
-      "in_private_from_secure": aws_network_acl_rule.in_private_from_secure
+    "ingress" : {
+      "in_private_from_world_tcp" : aws_network_acl_rule.in_private_from_world_tcp
+      "in_private_from_world_icmp_reply" : aws_network_acl_rule.in_private_from_world_icmp_reply
+      "in_private_from_private" : aws_network_acl_rule.in_private_from_private
+      "in_private_from_public" : aws_network_acl_rule.in_private_from_public
+      "in_private_from_secure" : aws_network_acl_rule.in_private_from_secure
     }
   }
 }
 
 output "secure_nacls" {
   value = {
-    "acl": aws_network_acl.secure
-    "egress": {
-      "out_secure_to_secure": aws_network_acl_rule.out_secure_to_secure
-      "out_secure_to_private": aws_network_acl_rule.out_secure_to_private
-      "out_secure_to_transit": var.transit_subnet ? aws_network_acl_rule.out_secure_to_transit[0] : {}
-      "out_secure_to_s3": var.vpc_endpoint_s3_gateway ? aws_network_acl_rule.out_secure_to_s3 : []
+    "acl" : aws_network_acl.secure
+    "egress" : {
+      "out_secure_to_secure" : aws_network_acl_rule.out_secure_to_secure
+      "out_secure_to_private" : aws_network_acl_rule.out_secure_to_private
+      "out_secure_to_transit" : var.transit_subnet ? aws_network_acl_rule.out_secure_to_transit[0] : {}
+      "out_secure_to_s3" : var.vpc_endpoint_s3_gateway ? aws_network_acl_rule.out_secure_to_s3 : []
     }
-    "ingress": {
-      "in_secure_from_secure": aws_network_acl_rule.in_secure_from_secure
-      "in_secure_from_private": aws_network_acl_rule.in_secure_from_private
-      "in_secure_from_transit": var.transit_subnet ? aws_network_acl_rule.in_secure_from_transit[0] : {}
-      "in_secure_from_s3": var.vpc_endpoint_s3_gateway ? aws_network_acl_rule.in_secure_from_s3 : []
+    "ingress" : {
+      "in_secure_from_secure" : aws_network_acl_rule.in_secure_from_secure
+      "in_secure_from_private" : aws_network_acl_rule.in_secure_from_private
+      "in_secure_from_transit" : var.transit_subnet ? aws_network_acl_rule.in_secure_from_transit[0] : {}
+      "in_secure_from_s3" : var.vpc_endpoint_s3_gateway ? aws_network_acl_rule.in_secure_from_s3 : []
     }
   }
 }
