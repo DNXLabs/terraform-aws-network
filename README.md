@@ -56,7 +56,9 @@ module "network" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| byoip | Enable module to use your own Elastic IPs (Bring Your Own IP) | `bool` | `false` | no |
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
+| eip\_allocation\_ids | User-specified primary or secondary private IP address to associate with the Elastic IP address | `list(string)` | `[]` | no |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_secure | List of kubernetes cluster names to creates tags in secure subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |

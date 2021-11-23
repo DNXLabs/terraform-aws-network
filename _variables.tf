@@ -126,6 +126,18 @@ variable "kubernetes_clusters_type" {
   description = "Use either 'owned' or 'shared' for kubernetes cluster tags"
 }
 
+variable "byoip" {
+  type        = bool
+  default     = false
+  description = "Enable module to use your own Elastic IPs (Bring Your Own IP)"
+}
+
+variable "eip_allocation_ids" {
+  type        = list(string)
+  default     = []
+  description = "User-specified primary or secondary private IP address to associate with the Elastic IP address"
+}
+
 
 locals {
   kubernetes_clusters = zipmap(
