@@ -129,7 +129,7 @@ variable "kubernetes_clusters_type" {
 variable "byoip" {
   type        = bool
   default     = false
-  description = "Enable EC2 Bring your own IP (BYOIP) pool"
+  description = "Enable module to use your own Elastic IPs (Bring Your Own IP)"
 }
 
 variable "eip_allocation_ids" {
