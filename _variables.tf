@@ -125,6 +125,12 @@ variable "vpc_endpoint_s3_gateway" {
   description = "Enable or disable VPC Endpoint for S3 Gateway"
 }
 
+variable "vpc_endpoint_dynamodb_gateway" {
+  type        = bool
+  default     = true
+  description = "Enable or disable VPC Endpoint for DynamoDB (Gateway)"
+}
+
 variable "vpc_endpoints" {
   type        = list(string)
   default     = []
