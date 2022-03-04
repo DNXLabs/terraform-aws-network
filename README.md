@@ -82,6 +82,7 @@ module "network" {
 | transit\_subnet | Create a transit subnet for VPC peering (only central account) | `bool` | `false` | no |
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
+| vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for DynamoDB (Gateway) | `bool` | `true` | no |
 | vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
 | vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
