@@ -102,6 +102,19 @@ variable "vpc_endpoint_s3_gateway" {
   description = "Enable or disable VPC Endpoint for S3 Gateway"
 }
 
+variable "vpc_endpoint_s3_policy" {
+  default     = <<POLICY
+    {
+        "Statement": [
+            {
+                "Action": "*","Effect": "Allow","Resource": "*","Principal": "*"
+            }
+        ]
+    }
+    POLICY
+  description = "A policy to attach to the endpoint that controls access to the service"
+}
+
 variable "vpc_endpoints" {
   type        = list(string)
   default     = []
