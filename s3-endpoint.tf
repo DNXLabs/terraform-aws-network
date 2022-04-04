@@ -5,10 +5,6 @@ resource "aws_vpc_endpoint" "s3" {
 
   policy = var.vpc_endpoint_s3_policy
 
-  lifecycle {
-    ignore_changes = [policy]
-  }
-
   tags = merge(
     var.tags,
     {
