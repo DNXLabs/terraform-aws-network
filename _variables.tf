@@ -57,6 +57,11 @@ variable "transit_netnum_offset" {
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
 
+variable "firewall_netnum_offset" {
+  default     = 14
+  description = "Start with this subnet for secure ones, plus number of AZs"
+}
+
 variable "transit_subnet" {
   default     = false
   description = "Create a transit subnet for VPC peering (only central account)"
@@ -151,6 +156,17 @@ variable "eip_allocation_ids" {
   description = "User-specified primary or secondary private IP address to associate with the Elastic IP address"
 }
 
+variable "network_firewall" {
+  type        = bool
+  default     = false
+  description = "Enable or disable VPC Network Firewall"
+}
+
+variable "firewall_domain_list" {
+  type = list
+  default = [".amazonaws.com", ".github.com"]
+  description = "List the domain names you want to take action on."
+}
 
 locals {
   kubernetes_clusters = zipmap(
