@@ -32,6 +32,12 @@ resource "aws_networkfirewall_firewall_policy" "default" {
     stateful_rule_group_reference {
       resource_arn = aws_networkfirewall_rule_group.stateful_domain[0].arn
     }
+    dynamic "stateful_rule_group_reference" {
+      for_each = aws_networkfirewall_rule_group.stateful_suricata
+      content {
+        resource_arn = stateful_rule_group_reference.value.arn
+      }
+    }
     stateful_rule_group_reference {
       resource_arn = aws_networkfirewall_rule_group.drop_all[0].arn
     }
@@ -81,6 +87,15 @@ resource "aws_networkfirewall_rule_group" "stateful_domain" {
       }
     }
   }
+}
+
+# Statefull suricata rules
+resource "aws_networkfirewall_rule_group" "stateful_suricata" {
+  count    = var.network_firewall && var.firewall_suricata_rules != "" ? 1 : 0
+  capacity = 100
+  name     = "${var.name}-Stateful-Suricata"
+  type     = "STATEFUL"
+  rules    = var.firewall_suricata_rules
 }
 
 # Statefull rule to block any TCP
