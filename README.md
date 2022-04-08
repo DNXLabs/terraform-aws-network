@@ -83,14 +83,7 @@ module "network" {
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
 | vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
-| vpc\_endpoint\_s3\_policy | A policy to attach to the endpoint that controls access to the service | `string` | `"    {
-        \"Statement\": [
-            {
-                \"Action\": \"*\",\"Effect\": \"Allow\",\"Resource\": \"*\",\"Principal\": \"*\"
-            }
-        ]
-    }
-"` | no |
+| vpc\_endpoint\_s3\_policy | A policy to attach to the endpoint that controls access to the service | `string` | `" { \"Statement\": [{\"Action\": \"*\",\"Effect\": \"Allow\"\"Resource\": \"*\",\"Principal\": \"*\" } ] }"` | no |
 | vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
