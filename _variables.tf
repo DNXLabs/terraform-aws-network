@@ -63,7 +63,7 @@ variable "firewall_netnum_offset" {
 }
 
 variable "firewall_suricata_rules" {
-  default = ""
+  default     = ""
   description = "The stateful rule group rules specifications in Suricata file format, with one rule per line"
 }
 
@@ -168,8 +168,8 @@ variable "network_firewall" {
 }
 
 variable "firewall_domain_list" {
-  type = list
-  default = [".amazonaws.com", ".github.com"]
+  type        = list(any)
+  default     = [".amazonaws.com", ".github.com"]
   description = "List the domain names you want to take action on."
 }
 

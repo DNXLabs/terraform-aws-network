@@ -14,9 +14,9 @@ resource "aws_subnet" "firewall" {
   tags = merge(
     var.tags,
     {
-      "Name"                = "${var.name}-Subnet-Firewall-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
-      "Scheme"              = "firewall"
-      "EnvName"             = var.name
+      "Name"    = "${var.name}-Subnet-Firewall-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Scheme"  = "firewall"
+      "EnvName" = var.name
     },
   )
 }
@@ -61,7 +61,7 @@ resource "aws_route_table_association" "firewall" {
 resource "aws_route_table" "igw_route_table" {
   count  = var.network_firewall ? 1 : 0
   vpc_id = aws_vpc.default.id
-  tags   = merge(
+  tags = merge(
     var.tags,
     {
       "Name"    = "${var.name}-RouteTable-IGW"
@@ -70,7 +70,7 @@ resource "aws_route_table" "igw_route_table" {
   )
 }
 
-resource "aws_route_table_association" "edge_association" { 
+resource "aws_route_table_association" "edge_association" {
   count          = var.network_firewall ? 1 : 0
   gateway_id     = aws_internet_gateway.default.id
   route_table_id = aws_route_table.igw_route_table[0].id

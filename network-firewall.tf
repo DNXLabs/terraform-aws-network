@@ -5,7 +5,7 @@ resource "aws_networkfirewall_firewall" "default" {
   description         = "Managed by terrfaform"
   firewall_policy_arn = aws_networkfirewall_firewall_policy.default[0].arn
   vpc_id              = aws_vpc.default.id
-  
+
   dynamic "subnet_mapping" {
     for_each = aws_subnet.firewall[*].id
     content {
@@ -21,12 +21,12 @@ resource "aws_networkfirewall_firewall_policy" "default" {
   count       = var.network_firewall ? 1 : 0
   name        = "${var.name}-Default-Policy"
   description = "Managed by terraform"
-  
+
   firewall_policy {
     stateless_default_actions          = ["aws:forward_to_sfe"]
     stateless_fragment_default_actions = ["aws:forward_to_sfe"]
-    stateless_rule_group_reference { 
-      priority = 10
+    stateless_rule_group_reference {
+      priority     = 10
       resource_arn = aws_networkfirewall_rule_group.stateless_forward[0].arn
     }
     stateful_rule_group_reference {
