@@ -23,6 +23,16 @@ output "public_subnet_cidrs" {
   description = "List of public subnet CIDRs"
 }
 
+output "firewall_subnet_cidrs" {
+  value       = aws_subnet.firewall.*.cidr_block
+  description = "List of firewall subnet CIDRs"
+}
+
+output "firewall_subnet_ids" {
+  value       = aws_subnet.firewall.*.id
+  description = "List of firewall subnet IDs"
+}
+
 output "private_subnet_ids" {
   value       = aws_subnet.private.*.id
   description = "List of private subnet IDs"

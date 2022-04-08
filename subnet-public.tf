@@ -39,8 +39,9 @@ resource "aws_route_table" "public" {
 resource "aws_route" "public_internet_route" {
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = var.network_firewall ? null : aws_internet_gateway.default.id
-  vpc_endpoint_id        = var.network_firewall ? (aws_networkfirewall_firewall.default[0].firewall_status[0].sync_states[*].attachment[0].endpoint_id)[0] : null
+  gateway_id             = aws_internet_gateway.default.id
+  # gateway_id             = var.network_firewall ? null : aws_internet_gateway.default.id
+  # vpc_endpoint_id        = var.network_firewall ? (aws_networkfirewall_firewall.default[0].firewall_status[0].sync_states[*].attachment[0].endpoint_id)[0] : null
 
   lifecycle {
     create_before_destroy = true

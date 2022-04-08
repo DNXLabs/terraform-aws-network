@@ -4,7 +4,7 @@ resource "aws_subnet" "firewall" {
 
   cidr_block = cidrsubnet(
     aws_vpc.default.cidr_block,
-    14,
+    var.newbits,
     count.index + var.firewall_netnum_offset,
   )
 
@@ -22,7 +22,7 @@ resource "aws_subnet" "firewall" {
 }
 
 resource "aws_route_table" "firewall" {
-  count  = var.network_firewall ? local.nat_quantity : 0
+  count  = length(aws_subnet.firewall)
   vpc_id = aws_vpc.default.id
 
   tags = merge(
@@ -36,12 +36,23 @@ resource "aws_route_table" "firewall" {
 }
 
 resource "aws_route" "firewall_route" {
-  count                  = var.network_firewall ? local.nat_quantity : 0
+  count                  = length(aws_subnet.firewall)
   route_table_id         = aws_route_table.firewall[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.default.id
 
   lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "firewall" {
+  count          = length(aws_subnet.firewall)
+  subnet_id      = aws_subnet.firewall[count.index].id
+  route_table_id = aws_route_table.firewall[count.index].id
+
+  lifecycle {
+    ignore_changes        = [subnet_id]
     create_before_destroy = true
   }
 }
@@ -66,8 +77,10 @@ resource "aws_route_table_association" "edge_association" {
 }
 
 resource "aws_route" "igw_route" {
-  count                  = var.network_firewall ? local.nat_quantity : 0
+  count                  = length(aws_subnet.firewall)
   route_table_id         = aws_route_table.igw_route_table[0].id
   destination_cidr_block = aws_subnet.public[count.index].cidr_block
   vpc_endpoint_id        = (aws_networkfirewall_firewall.default[0].firewall_status[0].sync_states[*].attachment[0].endpoint_id)[0]
 }
+
+
