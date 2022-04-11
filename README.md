@@ -65,6 +65,8 @@ module "network" {
 | max\_az | Max number of AZs | `number` | `3` | no |
 | multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
 | name | Name prefix for the resources of this stack | `any` | n/a | yes |
+| name\_pattern | Name pattern to use for resources. Options: default, kebab | `string` | `"default"` | no |
+| name\_suffix | Adds a name suffix to all resources created | `string` | `""` | no |
 | nat | Deploy NAT instance(s) | `bool` | `true` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
