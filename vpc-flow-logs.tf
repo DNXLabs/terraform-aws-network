@@ -14,7 +14,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-VPC-Flow-LogGroup"
+      "Name"    = format(local.names[var.name_pattern].cwlog, var.name, local.name_suffix)
       "EnvName" = var.name
     },
   )
@@ -22,7 +22,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
 
 resource "aws_iam_role" "vpc_flow_logs" {
   count = var.vpc_flow_logs ? 1 : 0
-  name  = "${var.name}-${data.aws_region.current.name}-VPC-flow-logs"
+  name  = format(local.names[var.name_pattern].cwlog_iam_role, var.name, data.aws_region.current.name, local.name_suffix)
 
   assume_role_policy = <<EOF
 {
@@ -43,7 +43,7 @@ EOF
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-VPC-Flow-IAM-Role"
+      "Name"    = format(local.names[var.name_pattern].cwlog_iam_role, var.name, data.aws_region.current.name, local.name_suffix)
       "EnvName" = var.name
       "Region"  = data.aws_region.current.name
     },
@@ -52,7 +52,7 @@ EOF
 
 resource "aws_iam_role_policy" "vpc_flow_log" {
   count = var.vpc_flow_logs ? 1 : 0
-  name  = "${var.name}-${data.aws_region.current.name}-VPC-flow-logs"
+  name  = format(local.names[var.name_pattern].cwlog_iam_role, var.name, data.aws_region.current.name, local.name_suffix)
   role  = aws_iam_role.vpc_flow_logs[0].id
 
   policy = <<EOF

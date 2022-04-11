@@ -5,7 +5,7 @@ resource "aws_network_acl" "private" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-ACL-Private"
+      "Name"    = format(local.names[var.name_pattern].nacl_private, var.name, local.name_suffix)
       "Scheme"  = "private"
       "EnvName" = var.name
     }

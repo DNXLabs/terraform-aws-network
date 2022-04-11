@@ -180,6 +180,17 @@ variable "eip_allocation_ids" {
   description = "User-specified primary or secondary private IP address to associate with the Elastic IP address"
 }
 
+variable "name_suffix" {
+  type        = string
+  default     = ""
+  description = "Adds a name suffix to all resources created"
+}
+
+variable "name_pattern" {
+  type        = string
+  default     = "default"
+  description = "Name pattern to use for resources. Options: default, kebab"
+}
 
 locals {
   kubernetes_clusters = zipmap(
@@ -190,4 +201,58 @@ locals {
     formatlist("kubernetes.io/cluster/%s", var.kubernetes_clusters_secure),
     [for cluster in var.kubernetes_clusters_secure : var.kubernetes_clusters_type]
   )
+  name_suffix = var.name_suffix != "" ? "-${var.name_suffix}" : ""
+
+  names = {
+    default = {
+      db_subnet          = "%s-DBSubnet%s",
+      nacl_private       = "%s-ACL-Private%s",
+      nacl_public        = "%s-ACL-Public%s",
+      nacl_secure        = "%s-ACL-Secure%s",
+      nacl_transit       = "%s-ACL-Transit%s",
+      eip                = "%s-EIP-%s%s",
+      natgw              = "%s-NATGW-%s%s",
+      subnet_private     = "%s-Subnet-Private-%s%s",
+      routetable_private = "%s-RouteTable-Private-%s%s",
+      subnet_public      = "%s-Subnet-Public-%s%s",
+      routetable_public  = "%s-RouteTable-Public%s",
+      subnet_secure      = "%s-Subnet-Secure-%s%s",
+      routetable_secure  = "%s-RouteTable-Secure%s",
+      subnet_transit     = "%s-Subnet-Transit-%s%s",
+      routetable_transit = "%s-RouteTable-Transit%s",
+      endpoint_dynamodb  = "%s-DynamoDB-Endpoint%s",
+      endpoint_s3        = "%s-S3-Endpoint%s",
+      endpoint           = "%s-%s-Endpoint%s",
+      sg_endpoint        = "%s-%s-VPC-endpoint-sg%s",
+      cwlog              = "%s-VPC-Flow-LogGroup%s"
+      cwlog_iam_role     = "%s-%s-VPC-flow-logs%s"
+      vpc                = "%s-VPC%s",
+      ig                 = "%s-IG%s",
+    }
+    kebab = {
+      db_subnet          = "%s-db-subnet%s",
+      nacl_private       = "%s-acl-private%s",
+      nacl_public        = "%s-acl-public%s",
+      nacl_secure        = "%s-acl-secure%s",
+      nacl_transit       = "%s-acl-transit%s",
+      eip                = "%s-eip-%s%s",
+      natgw              = "%s-natgw-%s%s",
+      subnet_private     = "%s-subnet-private-%s%s",
+      routetable_private = "%s-routetable-private-%s%s",
+      subnet_public      = "%s-subnet-public-%s%s",
+      routetable_public  = "%s-routetable-public%s",
+      subnet_secure      = "%s-subnet-secure-%s%s",
+      routetable_secure  = "%s-routetable-secure%s",
+      subnet_transit     = "%s-subnet-transit-%s%s",
+      routetable_transit = "%s-routetable-transit%s",
+      endpoint_dynamodb  = "%s-dynamodb-endpoint%s",
+      endpoint_s3        = "%s-s3-endpoint%s",
+      endpoint           = "%s-%s-endpoint%s",
+      sg_endpoint        = "%s-%s-endpoint-sg%s",
+      cwlog              = "%s-vpc-flowlogs-loggroup%s"
+      cwlog_iam_role     = "%s-%s-vpc-flowlogs-iamrole%s"
+      vpc                = "%s-vpc%s",
+      ig                 = "%s-ig%s",
+    }
+  }
 }
