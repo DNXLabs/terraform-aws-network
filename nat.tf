@@ -9,7 +9,7 @@ resource "aws_eip" "nat_eip" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-EIP-${count.index}"
+      "Name"    = format(local.names[var.name_pattern].eip, var.name, count.index, local.name_suffix)
       "EnvName" = var.name
     },
   )
@@ -23,7 +23,7 @@ resource "aws_nat_gateway" "nat_gw" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-NATGW-${count.index}"
+      "Name"    = format(local.names[var.name_pattern].natgw, var.name, count.index, local.name_suffix)
       "EnvName" = var.name
     },
   )

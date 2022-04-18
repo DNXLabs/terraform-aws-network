@@ -20,7 +20,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-dynamodb-Endpoint"
+      "Name"    = format(local.names[var.name_pattern].endpoint_dynamodb, var.name, local.name_suffix)
       "EnvName" = var.name
     },
   )

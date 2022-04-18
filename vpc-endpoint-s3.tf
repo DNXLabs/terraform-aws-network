@@ -12,7 +12,7 @@ resource "aws_vpc_endpoint" "s3" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-S3-Endpoint"
+      "Name"    = format(local.names[var.name_pattern].endpoint_s3, var.name, local.name_suffix)
       "EnvName" = var.name
     },
   )

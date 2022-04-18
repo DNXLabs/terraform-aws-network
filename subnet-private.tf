@@ -14,7 +14,7 @@ resource "aws_subnet" "private" {
   tags = merge(
     var.tags,
     {
-      "Name"                = "${var.name}-Subnet-Private-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Name"                = format(local.names[var.name_pattern].subnet_private, var.name, upper(data.aws_availability_zone.az[count.index].name_suffix), local.name_suffix)
       "Scheme"              = "private"
       "EnvName"             = var.name
       "aws-cdk:subnet-name" = "Private"
@@ -34,7 +34,7 @@ resource "aws_route_table" "private" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-RouteTable-Private-${count.index}"
+      "Name"    = format(local.names[var.name_pattern].routetable_private, var.name, count.index, local.name_suffix)
       "Scheme"  = "private"
       "EnvName" = var.name
     },
