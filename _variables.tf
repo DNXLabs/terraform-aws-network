@@ -62,7 +62,7 @@ variable "firewall_netnum_offset" {
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
 
-variable "firewall_suricata_rules" {
+variable "firewall_custom_rules" {
   default     = ""
   description = "The stateful rule group rules specifications in Suricata file format, with one rule per line"
 }

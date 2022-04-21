@@ -33,7 +33,7 @@ resource "aws_networkfirewall_firewall_policy" "default" {
       resource_arn = aws_networkfirewall_rule_group.stateful_domain[0].arn
     }
     dynamic "stateful_rule_group_reference" {
-      for_each = aws_networkfirewall_rule_group.stateful_suricata
+      for_each = aws_networkfirewall_rule_group.stateful_custom
       content {
         resource_arn = stateful_rule_group_reference.value.arn
       }
@@ -67,6 +67,35 @@ resource "aws_networkfirewall_rule_group" "stateless_forward" {
             }
           }
         }
+        stateless_rule {
+          priority = 5
+          rule_definition {
+            actions = ["aws:drop"]
+            match_attributes {
+              source {
+                address_definition = "0.0.0.0/0"
+              }
+              destination {
+                address_definition = "0.0.0.0/0"
+              }
+              protocols = [1]
+            }
+          }
+        }
+        stateless_rule {
+          priority = 2
+          rule_definition {
+            actions = ["aws:pass"]
+            match_attributes {
+              source {
+                address_definition = "0.0.0.0/0"
+              }
+              destination {
+                address_definition = aws_vpc.default.cidr_block
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -89,13 +118,13 @@ resource "aws_networkfirewall_rule_group" "stateful_domain" {
   }
 }
 
-# Statefull suricata rules
-resource "aws_networkfirewall_rule_group" "stateful_suricata" {
-  count    = var.network_firewall && var.firewall_suricata_rules != "" ? 1 : 0
+# Statefull custom rules
+resource "aws_networkfirewall_rule_group" "stateful_custom" {
+  count    = var.network_firewall && var.firewall_custom_rules != "" ? 1 : 0
   capacity = 100
-  name     = "${var.name}-Stateful-Suricata"
+  name     = "${var.name}-Stateful-Custom"
   type     = "STATEFUL"
-  rules    = var.firewall_suricata_rules
+  rules    = var.firewall_custom_rules
 }
 
 # Statefull rule to block any TCP

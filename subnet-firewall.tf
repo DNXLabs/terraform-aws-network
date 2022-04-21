@@ -77,7 +77,7 @@ resource "aws_route_table_association" "edge_association" {
 }
 
 resource "aws_route" "igw_route" {
-  count                  = length(aws_subnet.firewall)
+  count                  = var.network_firewall ? length(aws_subnet.public) : 0
   route_table_id         = aws_route_table.igw_route_table[0].id
   destination_cidr_block = aws_subnet.public[count.index].cidr_block
   vpc_endpoint_id        = (aws_networkfirewall_firewall.default[0].firewall_status[0].sync_states[*].attachment[0].endpoint_id)[0]
