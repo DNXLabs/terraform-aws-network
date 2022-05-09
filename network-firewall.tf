@@ -39,7 +39,7 @@ resource "aws_networkfirewall_firewall_policy" "default" {
       }
     }
     stateful_rule_group_reference {
-      resource_arn = aws_networkfirewall_rule_group.drop_all[0].arn
+      resource_arn = aws_networkfirewall_rule_group.stateful_default[0].arn
     }
   }
 }
@@ -54,7 +54,7 @@ resource "aws_networkfirewall_rule_group" "stateless_forward" {
     rules_source {
       stateless_rules_and_custom_actions {
         stateless_rule {
-          priority = 10
+          priority = 100
           rule_definition {
             actions = ["aws:forward_to_sfe"]
             match_attributes {
@@ -68,7 +68,7 @@ resource "aws_networkfirewall_rule_group" "stateless_forward" {
           }
         }
         stateless_rule {
-          priority = 5
+          priority = 50
           rule_definition {
             actions = ["aws:drop"]
             match_attributes {
@@ -79,20 +79,6 @@ resource "aws_networkfirewall_rule_group" "stateless_forward" {
                 address_definition = "0.0.0.0/0"
               }
               protocols = [1]
-            }
-          }
-        }
-        stateless_rule {
-          priority = 2
-          rule_definition {
-            actions = ["aws:pass"]
-            match_attributes {
-              source {
-                address_definition = "0.0.0.0/0"
-              }
-              destination {
-                address_definition = aws_vpc.default.cidr_block
-              }
             }
           }
         }
@@ -128,14 +114,13 @@ resource "aws_networkfirewall_rule_group" "stateful_custom" {
 }
 
 # Statefull rule to block any TCP
-resource "aws_networkfirewall_rule_group" "drop_all" {
+resource "aws_networkfirewall_rule_group" "stateful_default" {
   count    = var.network_firewall ? 1 : 0
   capacity = 100
-  name     = "${var.name}-Stateful-DropAll"
+  name     = "${var.name}-Stateful-Default"
   type     = "STATEFUL"
-  rule_group {
-    rules_source {
-      rules_string = "drop tcp any any -> any any (flow:established,to_server; msg:\"Deny all other TCP traffic\"; sid: 1000003; rev:1;)"
-    }
-  }
+  rules    = <<-EOT
+  pass ip $EXTERNAL_NET any -> $HOME_NET any (msg:"Allow ingress traffic"; sid: 1000002; rev:1;)
+  drop tcp any any -> any any (flow:established,to_server; msg:"Deny all other TCP traffic"; sid: 1000003; rev:1;)
+  EOT
 }
