@@ -63,7 +63,8 @@ variable "firewall_netnum_offset" {
 }
 
 variable "firewall_custom_rules" {
-  default     = ""
+  type        = list(string)
+  default     = []
   description = "The stateful rule group rules specifications in Suricata file format, with one rule per line"
 }
 

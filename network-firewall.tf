@@ -106,11 +106,15 @@ resource "aws_networkfirewall_rule_group" "stateful_domain" {
 
 # Statefull custom rules
 resource "aws_networkfirewall_rule_group" "stateful_custom" {
-  count    = var.network_firewall && var.firewall_custom_rules != "" ? 1 : 0
+  count    = var.network_firewall && length(var.firewall_custom_rules) > 0 ? 1 : 0
   capacity = 100
   name     = "${var.name}-Stateful-Custom"
   type     = "STATEFUL"
-  rules    = var.firewall_custom_rules
+  rules    = <<EOT
+  %{ for rule in var.firewall_custom_rules }
+  ${rule}
+  %{ endfor }
+  EOT
 }
 
 # Statefull rule to block any TCP
