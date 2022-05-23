@@ -111,9 +111,9 @@ resource "aws_networkfirewall_rule_group" "stateful_custom" {
   name     = "${var.name}-Stateful-Custom"
   type     = "STATEFUL"
   rules    = <<EOT
-  %{ for rule in var.firewall_custom_rules }
+  %{for rule in var.firewall_custom_rules}
   ${rule}
-  %{ endfor }
+  %{endfor}
   EOT
 }
 
