@@ -38,8 +38,11 @@ resource "aws_networkfirewall_firewall_policy" "default" {
         resource_arn = stateful_rule_group_reference.value.arn
       }
     }
-    stateful_rule_group_reference {
-      resource_arn = aws_networkfirewall_rule_group.stateful_default[0].arn
+    dynamic "stateful_rule_group_reference" {
+      for_each = aws_networkfirewall_rule_group.stateful_default
+      content {
+        resource_arn = stateful_rule_group_reference.value.arn
+      }
     }
   }
 }
