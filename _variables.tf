@@ -174,6 +174,12 @@ variable "firewall_domain_list" {
   description = "List the domain names you want to take action on."
 }
 
+variable "enable_firewall_default_rule" {
+  type        = bool
+  default     = true
+  description = "Enable or disable the default stateful rule."
+}
+
 locals {
   kubernetes_clusters = zipmap(
     formatlist("kubernetes.io/cluster/%s", var.kubernetes_clusters),

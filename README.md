@@ -59,6 +59,7 @@ module "network" {
 | byoip | Enable module to use your own Elastic IPs (Bring Your Own IP) | `bool` | `false` | no |
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
 | eip\_allocation\_ids | User-specified primary or secondary private IP address to associate with the Elastic IP address | `list(string)` | `[]` | no |
+| enable\_firewall\_default\_rule | Enable or disable the default stateful rule. | `bool` | `true` | no |
 | firewall\_custom\_rules | The stateful rule group rules specifications in Suricata file format, with one rule per line | `list(string)` | `[]` | no |
 | firewall\_domain\_list | List the domain names you want to take action on. | `list(any)` | <pre>[<br>  ".amazonaws.com",<br>  ".github.com"<br>]</pre> | no |
 | firewall\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `14` | no |
