@@ -119,7 +119,7 @@ resource "aws_networkfirewall_rule_group" "stateful_custom" {
 
 # Statefull rule to block any TCP
 resource "aws_networkfirewall_rule_group" "stateful_default" {
-  count    = var.network_firewall ? 1 : 0
+  count    = var.network_firewall ? 1 : 0 && var.enable_firewall_default_rule
   capacity = 100
   name     = "${var.name}-Stateful-Default"
   type     = "STATEFUL"
