@@ -2,23 +2,30 @@ resource "aws_vpc_endpoint" "default" {
   count = length(var.vpc_endpoints)
 
   vpc_id              = aws_vpc.default.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.${var.vpc_endpoints[count.index]}"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.${each.key}"
   vpc_endpoint_type   = "Interface"
-  private_dns_enabled = var.vpc_endpoints[count.index] == "s3" ? false : true
+  private_dns_enabled = each.key == "s3" ? false : true
   subnet_ids          = aws_subnet.private[*].id
 
   security_group_ids = [
-    aws_security_group.vpc_endpoints[count.index].id,
+    aws_security_group.vpc_endpoints[each.key].id,
   ]
 
-  lifecycle {
-    ignore_changes = [policy]
-  }
+  policy = try(each.value.custom_policy, <<POLICY
+      {
+        "Statement": [
+            {
+              "Action": "*","Effect": "Allow","Resource": "*","Principal": "*"
+            }
+          ]
+      }
+    POLICY
+  )
 
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-${var.vpc_endpoints[count.index]}-Endpoint"
+      "Name"    = "${var.name}-${each.key}-Endpoint"
       "EnvName" = var.name
     },
   )
@@ -30,7 +37,7 @@ resource "aws_vpc_endpoint" "default" {
 resource "aws_security_group" "vpc_endpoints" {
   count = length(var.vpc_endpoints)
 
-  name   = "${var.vpc_endpoints[count.index]}-vpc-endpoint-sg"
+  name   = "${each.key}-vpc-endpoint-sg"
   vpc_id = aws_vpc.default.id
 
   ingress {
@@ -42,6 +49,6 @@ resource "aws_security_group" "vpc_endpoints" {
   }
 
   tags = {
-    Name = "${var.vpc_endpoints[count.index]}-vpc-endpoint-sg"
+    Name = "${each.key}-vpc-endpoint-sg"
   }
 }

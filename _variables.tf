@@ -127,9 +127,12 @@ variable "vpc_endpoint_s3_policy" {
 }
 
 variable "vpc_endpoints" {
-  type        = list(string)
-  default     = []
-  description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
+  type        = map
+  default     = {
+    endpoint = null
+    custom_policy = null
+  }
+  description = "A policy to attach to the endpoint that controls access to the service"
 }
 
 variable "kubernetes_clusters" {
