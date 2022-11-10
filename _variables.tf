@@ -150,13 +150,15 @@ variable "vpc_endpoint_dynamodb_policy" {
 }
 
 variable "vpc_endpoints" {
+  type = list(object(
+    {
+      name   = string
+      policy = optional(string)
+    }
+  ))
   validation {
-    type = list(object(
-      {
-        name   = string
-        policy = optional(string)
-      }
-    ))
+    condition     = var.vpc_endpoints.policy == null
+    error_message = "Validation condition of the test variable did not meet."
   }
   default     = []
   description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
