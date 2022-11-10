@@ -1,5 +1,5 @@
 terraform {
-  experiments = [variable_validation]
+  experiments = [module_variable_optional_attrs]
 }
 
 variable "max_az" {
@@ -156,10 +156,6 @@ variable "vpc_endpoints" {
       policy = optional(string)
     }
   ))
-  validation {
-    condition     = var.vpc_endpoints.policy == null
-    error_message = "Validation condition of the test variable did not meet."
-  }
   default     = []
   description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
 }
