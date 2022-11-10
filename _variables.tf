@@ -1,3 +1,7 @@
+terraform {
+  experiments = [vpc_endpoints]
+}
+
 variable "max_az" {
   default     = 3
   description = "Max number of AZs"
