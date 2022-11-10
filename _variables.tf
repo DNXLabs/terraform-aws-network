@@ -1,5 +1,5 @@
 terraform {
-  experiments = [optional]
+  experiments = [variable_policy]
 }
 
 variable "max_az" {
