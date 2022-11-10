@@ -169,7 +169,7 @@ resource "aws_network_acl_rule" "out_private_to_s3" {
 }
 
 #############
-# S3 Endpoint
+# Dynamodb Endpoint
 #############
 resource "aws_network_acl_rule" "in_private_from_dynamodb" {
   count          = var.vpc_endpoint_dynamodb_gateway ? length(data.aws_ec2_managed_prefix_list.dynamodb.entries) : 0
