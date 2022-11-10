@@ -8,15 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: terraform-linters/setup-tflint@v2
-        name: Setup TFLint
-        with:
-          tflint_version: v0.38.1
-      - name: Init TFLint
-        run: tflint --init
-
-      - name: Run TFLint
-        run: tflint -f compact
+      - name: TFLint
+        uses: docker://wata727/tflint
 
   fmt:
     name: Code Format
