@@ -71,13 +71,8 @@ resource "aws_vpc_endpoint_route_table_association" "private" {
   vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
 }
 
-# resource "aws_route_table_association" "private_single" {
-#   count          = var.nat_count == length(data.aws_availability_zones.available.names) ? 0 : 1
-#   subnet_id      = aws_subnet.private.*.id[count.index]
-#   route_table_id = aws_route_table.private.*.id[count.index]
-#
-#   lifecycle {
-#     ignore_changes        = ["subnet_id"]
-#     create_before_destroy = true
-#   }
-# }
+resource "aws_vpc_endpoint_route_table_association" "dynamo_private" {
+  count           = var.vpc_endpoint_dynamodb_gateway ? length(aws_subnet.private) : 0
+  route_table_id  = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
+  vpc_endpoint_id = aws_vpc_endpoint.dynamodb[0].id
+}
