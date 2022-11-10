@@ -1,5 +1,5 @@
 terraform {
-  experiments = [vpc_endpoints]
+  experiments = [optional]
 }
 
 variable "max_az" {
