@@ -146,9 +146,9 @@ variable "vpc_endpoint_dynamodb_policy" {
 }
 
 variable "vpc_endpoints" {
-  type        = list(object(
+  type = list(object(
     {
-      name = string
+      name   = string
       policy = optional(string)
     }
   ))
