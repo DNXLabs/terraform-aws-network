@@ -24,7 +24,7 @@ jobs:
     name: Validate
     runs-on: ubuntu-latest
     container:
-      image: hashicorp/terraform:latest
+      image: hashicorp/terraform:0.14.0
     steps:
       - uses: actions/checkout@master
       - name: Validate Code
@@ -51,7 +51,7 @@ jobs:
     name: Minimum version check
     runs-on: ubuntu-latest
     container:
-      image: hashicorp/terraform:0.12.0
+      image: hashicorp/terraform:0.14.0
     steps:
       - uses: actions/checkout@master
       - name: Validate Code

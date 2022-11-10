@@ -1,3 +1,7 @@
+terraform {
+  experiments = [module_variable_optional_attrs]
+}
+
 variable "max_az" {
   default     = 3
   description = "Max number of AZs"
@@ -126,8 +130,32 @@ variable "vpc_endpoint_s3_policy" {
   description = "A policy to attach to the endpoint that controls access to the service"
 }
 
+variable "vpc_endpoint_dynamodb_gateway" {
+  type        = bool
+  default     = true
+  description = "Enable or disable VPC Endpoint for dynamodb Gateway"
+}
+
+variable "vpc_endpoint_dynamodb_policy" {
+  default     = <<POLICY
+    {
+        "Statement": [
+            {
+                "Action": "*","Effect": "Allow","Resource": "*","Principal": "*"
+            }
+        ]
+    }
+    POLICY
+  description = "A policy to attach to the endpoint that controls access to the service"
+}
+
 variable "vpc_endpoints" {
-  type        = list(string)
+  type = list(object(
+    {
+      name   = string
+      policy = optional(string)
+    }
+  ))
   default     = []
   description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
 }

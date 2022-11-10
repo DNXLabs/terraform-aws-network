@@ -54,3 +54,9 @@ resource "aws_vpc_endpoint_route_table_association" "secure" {
   route_table_id  = aws_route_table.secure.id
   vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
 }
+
+resource "aws_vpc_endpoint_route_table_association" "dynamodb_secure" {
+  count           = var.vpc_endpoint_dynamodb_gateway ? 1 : 0
+  route_table_id  = aws_route_table.secure.id
+  vpc_endpoint_id = aws_vpc_endpoint.dynamodb[0].id
+}
