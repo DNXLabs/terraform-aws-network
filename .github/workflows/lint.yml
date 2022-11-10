@@ -51,7 +51,7 @@ jobs:
     name: Minimum version check
     runs-on: ubuntu-latest
     container:
-      image: hashicorp/terraform:1.3.0
+      image: hashicorp/terraform:0.14.0
     steps:
       - uses: actions/checkout@master
       - name: Validate Code
@@ -59,6 +59,6 @@ jobs:
           AWS_REGION: 'us-east-1'
           TF_WARN_OUTPUT_ERRORS: 1
         run: |
-          sed -i -e 's/>=/=/' -e 's/ \(\d\+\.\d\+\)"/ \1.3"/' versions.tf
+          sed -i -e 's/>=/=/' -e 's/ \(\d\+\.\d\+\)"/ \1.0"/' versions.tf
           terraform init
           terraform validate -var "region=${AWS_REGION}" -var "vpc_id=vpc-123456" -var "subnets=[\"subnet-12345a\"]" -var "workers_ami_id=ami-123456" -var "cluster_ingress_cidrs=[]" -var "cluster_name=test_cluster"
