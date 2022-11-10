@@ -1,5 +1,5 @@
 terraform {
-  experiments = [variable_policy]
+  experiments = [variable_validation]
 }
 
 variable "max_az" {
@@ -150,12 +150,14 @@ variable "vpc_endpoint_dynamodb_policy" {
 }
 
 variable "vpc_endpoints" {
-  type = list(object(
-    {
-      name   = string
-      policy = optional(string)
-    }
-  ))
+  validation {
+    type = list(object(
+      {
+        name   = string
+        policy = optional(string)
+      }
+    ))
+  }
   default     = []
   description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
 }
