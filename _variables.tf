@@ -72,6 +72,12 @@ variable "firewall_custom_rules" {
   description = "The stateful rule group rules specifications in Suricata file format, with one rule per line"
 }
 
+variable "firewall_custom_rule_arn" {
+  type        = list(string)
+  default     = []
+  description = "The stateful rule group arn created outside the module"
+}
+
 variable "transit_subnet" {
   default     = false
   description = "Create a transit subnet for VPC peering (only central account)"
