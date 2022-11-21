@@ -45,7 +45,7 @@ resource "aws_networkfirewall_firewall_policy" "default" {
       }
     }
     dynamic "stateful_rule_group_reference" {
-      for_each = var.firewall_custom_rule_arn
+      for_each = var.firewall_custom_rules == [] ? [] : []
       content {
         resource_arn = stateful_rule_group_reference.value
       }
