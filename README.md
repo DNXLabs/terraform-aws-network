@@ -64,6 +64,7 @@ module "network" {
 | firewall\_custom\_rules | The stateful rule group rules specifications in Suricata file format, with one rule per line | `list(string)` | `[]` | no |
 | firewall\_domain\_list | List the domain names you want to take action on. | `list(any)` | <pre>[<br>  ".amazonaws.com",<br>  ".github.com"<br>]</pre> | no |
 | firewall\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `14` | no |
+| kms\_key\_arn | The ARN of the KMS Key to use when encrypting log data. | `string` | n/a | yes |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_secure | List of kubernetes cluster names to creates tags in secure subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |
