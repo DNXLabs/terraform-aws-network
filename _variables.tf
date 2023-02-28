@@ -224,3 +224,8 @@ locals {
     [for cluster in var.kubernetes_clusters_secure : var.kubernetes_clusters_type]
   )
 }
+
+variable "kms_key_arn" {
+  type        = string
+  description = "The ARN of the KMS Key to use when encrypting log data."
+}
