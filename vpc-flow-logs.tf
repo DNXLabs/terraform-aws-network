@@ -10,7 +10,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   count             = var.vpc_flow_logs ? 1 : 0
   name              = "/aws/vpc/${var.name}-VPC/flow-logs"
   retention_in_days = var.vpc_flow_logs_retention
-  kms_key_id        = length(var.kms_key_arn) > 0 ? var.kms_key_arn : ""
+  kms_key_id        = var.kms_key_arn
 
   tags = merge(
     var.tags,
