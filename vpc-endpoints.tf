@@ -16,7 +16,7 @@ resource "aws_vpc_endpoint" "default" {
   tags = merge(
     var.tags,
     {
-      "Name"    = format(local.names[var.name_pattern].endpoint, var.name, var.vpc_endpoints[count.index], local.name_suffix)
+      "Name"    = format(local.names[var.name_pattern].endpoint, var.name, each.value.name, local.name_suffix)
       "EnvName" = var.name
     },
   )
@@ -28,7 +28,7 @@ resource "aws_vpc_endpoint" "default" {
 resource "aws_security_group" "vpc_endpoints" {
   for_each = { for index, e in var.vpc_endpoints : e.name => e }
 
-  name   = format(local.names[var.name_pattern].sg_endpoint, var.name, var.vpc_endpoints[count.index], local.name_suffix)
+  name   = format(local.names[var.name_pattern].sg_endpoint, var.name, each.value.name, local.name_suffix)
   vpc_id = aws_vpc.default.id
 
   ingress {
