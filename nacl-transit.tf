@@ -1,3 +1,7 @@
+locals {
+  transit_subnet_ip = split("/",aws_subnet.transit.cidr_block)[0]
+  transit_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${transit_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_subnet.transit.cidr_bloc
+}
 resource "aws_network_acl" "transit" {
   count      = var.transit_subnet ? 1 : 0
   vpc_id     = aws_vpc.default.id
@@ -117,25 +121,25 @@ resource "aws_network_acl_rule" "in_transit_icmp" {
 }
 
 resource "aws_network_acl_rule" "in_transit_from_private" {
-  count          = var.transit_subnet ? length(aws_subnet.private.*.cidr_block) : 0
+  count          = var.transit_subnet ? var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block) : 0
   network_acl_id = aws_network_acl.transit[0].id
   rule_number    = count.index + 601
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.private.*.cidr_block[count.index]
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.private_subnet_summary : aws_subnet.private.*.cidr_block[count.index]
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "in_transit_from_secure" {
-  count          = var.transit_subnet ? length(aws_subnet.secure.*.cidr_block) : 0
+  count          = var.transit_subnet ? var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure.*.cidr_block) : 0
   network_acl_id = aws_network_acl.transit[0].id
   rule_number    = count.index + 701
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.secure.*.cidr_block[count.index]
+  cidr_block     =  var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure.*.cidr_block[count.index]
   from_port      = 0
   to_port        = 0
 }
