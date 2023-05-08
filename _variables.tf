@@ -40,6 +40,12 @@ variable "newbits" {
   description = "Number of bits to add to the vpc cidr when building subnets"
 }
 
+variable "vpc_cidr_summ" {
+  type        = string
+  default     = "/0"
+  description = "Define cidr used to summuary subnets"
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

@@ -1,3 +1,7 @@
+locals {
+  public_subnet_ip = split("/",aws_subnet.public.cidr_block)[0]
+  public_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${public_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_subnet.public.cidr_bloc
+}
 resource "aws_network_acl" "public" {
   vpc_id     = aws_vpc.default.id
   subnet_ids = aws_subnet.public.*.id
@@ -153,13 +157,13 @@ resource "aws_network_acl_rule" "out_public_icmp" {
 }
 
 resource "aws_network_acl_rule" "in_public_from_private" {
-  count          = length(aws_subnet.private.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block)
   network_acl_id = aws_network_acl.public.id
   rule_number    = count.index + 601
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.private[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.private_subnet_summary : aws_subnet.private[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
