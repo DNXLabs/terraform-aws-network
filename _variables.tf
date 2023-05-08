@@ -187,8 +187,9 @@ variable "vpc_endpoint_dynamodb_policy" {
 variable "vpc_endpoints" {
   type = list(object(
     {
-      name   = string
-      policy = optional(string)
+      name          = string
+      policy        = optional(string)
+      allowed_cidrs = optional(list(string))
     }
   ))
   default     = []

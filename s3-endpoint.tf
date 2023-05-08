@@ -14,5 +14,4 @@ resource "aws_vpc_endpoint" "s3" {
   )
 
   depends_on = [aws_vpc.default]
-
 }
