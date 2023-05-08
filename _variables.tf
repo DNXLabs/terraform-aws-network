@@ -1,3 +1,7 @@
+terraform {
+  experiments = [module_variable_optional_attrs]
+}
+
 variable "max_az" {
   default     = 3
   description = "Max number of AZs"
@@ -60,6 +64,23 @@ variable "secure_netnum_offset" {
 variable "transit_netnum_offset" {
   default     = 15
   description = "Start with this subnet for secure ones, plus number of AZs"
+}
+
+variable "firewall_netnum_offset" {
+  default     = 14
+  description = "Start with this subnet for secure ones, plus number of AZs"
+}
+
+variable "firewall_custom_rules" {
+  type        = list(string)
+  default     = []
+  description = "The stateful rule group rules specifications in Suricata file format, with one rule per line"
+}
+
+variable "firewall_custom_rule_arn" {
+  type        = list(string)
+  default     = []
+  description = "The stateful rule group arn created outside the module"
 }
 
 variable "transit_subnet" {
@@ -144,8 +165,32 @@ variable "vpc_endpoint_s3_policy" {
   description = "A policy to attach to the endpoint that controls access to the service"
 }
 
+variable "vpc_endpoint_dynamodb_gateway" {
+  type        = bool
+  default     = true
+  description = "Enable or disable VPC Endpoint for dynamodb Gateway"
+}
+
+variable "vpc_endpoint_dynamodb_policy" {
+  default     = <<POLICY
+    {
+        "Statement": [
+            {
+                "Action": "*","Effect": "Allow","Resource": "*","Principal": "*"
+            }
+        ]
+    }
+    POLICY
+  description = "A policy to attach to the endpoint that controls access to the service"
+}
+
 variable "vpc_endpoints" {
-  type        = list(string)
+  type = list(object(
+    {
+      name   = string
+      policy = optional(string)
+    }
+  ))
   default     = []
   description = "AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr)"
 }
@@ -185,11 +230,27 @@ variable "name_suffix" {
   default     = ""
   description = "Adds a name suffix to all resources created"
 }
-
 variable "name_pattern" {
   type        = string
   default     = "default"
   description = "Name pattern to use for resources. Options: default, kebab"
+}
+variable "network_firewall" {
+  type        = bool
+  default     = false
+  description = "Enable or disable VPC Network Firewall"
+}
+
+variable "firewall_domain_list" {
+  type        = list(any)
+  default     = [".amazonaws.com", ".github.com"]
+  description = "List the domain names you want to take action on."
+}
+
+variable "enable_firewall_default_rule" {
+  type        = bool
+  default     = true
+  description = "Enable or disable the default stateful rule."
 }
 
 locals {
