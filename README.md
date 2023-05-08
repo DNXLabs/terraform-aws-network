@@ -83,6 +83,7 @@ module "network" {
 | transit\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `15` | no |
 | transit\_subnet | Create a transit subnet for VPC peering (only central account) | `bool` | `false` | no |
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
+| vpc\_cidr\_summ | Define cidr used to summuary subnets | `string` | `"/0"` | no |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
 | vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for DynamoDB (Gateway) | `bool` | `true` | no |
 | vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
