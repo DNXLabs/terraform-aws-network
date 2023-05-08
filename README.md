@@ -108,7 +108,7 @@ module "network" {
         ]
     }
 "` | no |
-| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | <pre>list(object(<br>    {<br>      name   = string<br>      policy = optional(string)<br>    }<br>  ))</pre> | `[]` | no |
+| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | <pre>list(object(<br>    {<br>      name          = string<br>      policy        = optional(string)<br>      allowed_cidrs = optional(list(string))<br>    }<br>  ))</pre> | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 
