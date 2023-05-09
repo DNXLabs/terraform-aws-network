@@ -127,7 +127,7 @@ resource "aws_network_acl_rule" "in_transit_from_private" {
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = var.vpc_cidr_summ != "/0" ? local.private_subnet_summary : aws_subnet.private.*.cidr_block[count.index]
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.private_subnet_summary : aws_subnet.private[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
@@ -139,7 +139,7 @@ resource "aws_network_acl_rule" "in_transit_from_secure" {
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     =  var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure.*.cidr_block[count.index]
+  cidr_block     =  var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
