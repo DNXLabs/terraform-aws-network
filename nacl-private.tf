@@ -1,6 +1,6 @@
 locals {
   private_subnet_ip = split("/",aws_subnet.private.cidr_block)[0]
-  private_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${private_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_vpc.default.cidr_block
+  private_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${local.private_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_vpc.default.cidr_block
 }
 
 resource "aws_network_acl" "private" {
