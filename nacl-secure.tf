@@ -5,56 +5,28 @@ resource "aws_network_acl" "secure" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-ACL-Secure"
+      "Name"    = format(local.names[var.name_pattern].nacl_secure, var.name, local.name_suffix)
       "Scheme"  = "secure"
       "EnvName" = var.name
     }
   )
 }
 
-###########
-# EGRESS
-###########
+resource "aws_network_acl_rule" "in_secure_from_secure" {
+  count          = length(aws_subnet.secure.*.cidr_block)
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 101
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = aws_subnet.secure[count.index].cidr_block
+}
 
 resource "aws_network_acl_rule" "out_secure_to_secure" {
   count          = length(aws_subnet.secure.*.cidr_block)
   network_acl_id = aws_network_acl.secure.id
   rule_number    = count.index + 1
   egress         = true
-  protocol       = -1
-  rule_action    = "allow"
-  cidr_block     = aws_subnet.secure[count.index].cidr_block
-}
-
-resource "aws_network_acl_rule" "out_secure_to_private" {
-  count          = length(aws_subnet.private.*.cidr_block)
-  network_acl_id = aws_network_acl.secure.id
-  rule_number    = count.index + 101
-  egress         = true
-  protocol       = -1
-  rule_action    = "allow"
-  cidr_block     = aws_subnet.private[count.index].cidr_block
-}
-
-resource "aws_network_acl_rule" "out_secure_to_transit" {
-  count          = var.transit_subnet ? length(aws_subnet.transit.*.cidr_block) : 0
-  network_acl_id = aws_network_acl.secure.id
-  rule_number    = count.index + 201
-  egress         = true
-  protocol       = -1
-  rule_action    = "allow"
-  cidr_block     = aws_subnet.transit[count.index].cidr_block
-}
-
-###########
-# INGRESS
-###########
-
-resource "aws_network_acl_rule" "in_secure_from_secure" {
-  count          = length(aws_subnet.secure.*.cidr_block)
-  network_acl_id = aws_network_acl.secure.id
-  rule_number    = count.index + 101
-  egress         = false
   protocol       = -1
   rule_action    = "allow"
   cidr_block     = aws_subnet.secure[count.index].cidr_block
@@ -70,6 +42,16 @@ resource "aws_network_acl_rule" "in_secure_from_private" {
   cidr_block     = aws_subnet.private[count.index].cidr_block
 }
 
+resource "aws_network_acl_rule" "out_secure_to_private" {
+  count          = length(aws_subnet.private.*.cidr_block)
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 101
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = aws_subnet.private[count.index].cidr_block
+}
+
 resource "aws_network_acl_rule" "in_secure_from_transit" {
   count          = var.transit_subnet ? length(aws_subnet.transit.*.cidr_block) : 0
   network_acl_id = aws_network_acl.secure.id
@@ -80,6 +62,15 @@ resource "aws_network_acl_rule" "in_secure_from_transit" {
   cidr_block     = aws_subnet.transit[count.index].cidr_block
 }
 
+resource "aws_network_acl_rule" "out_secure_to_transit" {
+  count          = var.transit_subnet ? length(aws_subnet.transit.*.cidr_block) : 0
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 201
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = aws_subnet.transit[count.index].cidr_block
+}
 
 #############
 # S3 Endpoint

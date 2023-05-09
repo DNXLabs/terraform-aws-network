@@ -14,7 +14,7 @@ resource "aws_subnet" "private" {
   tags = merge(
     var.tags,
     {
-      "Name"                = "${var.name}-Subnet-Private-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Name"                = format(local.names[var.name_pattern].subnet_private, var.name, upper(data.aws_availability_zone.az[count.index].name_suffix), local.name_suffix)
       "Scheme"              = "private"
       "EnvName"             = var.name
       "aws-cdk:subnet-name" = "Private"
@@ -23,18 +23,18 @@ resource "aws_subnet" "private" {
     local.kubernetes_clusters,
     length(var.kubernetes_clusters) != 0 ? { "kubernetes.io/role/internal-elb" = 1 } : {}
   )
-
-  depends_on = [aws_nat_gateway.nat_gw]
 }
 
 resource "aws_route_table" "private" {
-  count  = var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1
+  count = var.nat && var.multi_nat ? (
+    length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)
+  ) : 1
   vpc_id = aws_vpc.default.id
 
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-RouteTable-Private-${count.index}"
+      "Name"    = format(local.names[var.name_pattern].routetable_private, var.name, count.index, local.name_suffix)
       "Scheme"  = "private"
       "EnvName" = var.name
     },
@@ -42,7 +42,10 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "nat_route" {
-  count                  = var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1
+  count = var.nat && var.multi_nat ? (
+    length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)
+  ) : (var.nat ? 1 : 0)
+
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
@@ -65,14 +68,13 @@ resource "aws_route_table_association" "private" {
   }
 }
 
-resource "aws_vpc_endpoint_route_table_association" "private" {
-  count           = var.vpc_endpoint_s3_gateway ? length(aws_subnet.private) : 0
-  route_table_id  = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
-  vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
-}
-
-resource "aws_vpc_endpoint_route_table_association" "dynamo_private" {
-  count           = var.vpc_endpoint_dynamodb_gateway ? length(aws_subnet.private) : 0
-  route_table_id  = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
-  vpc_endpoint_id = aws_vpc_endpoint.dynamodb[0].id
-}
+# resource "aws_route_table_association" "private_single" {
+#   count          = var.nat_count == length(data.aws_availability_zones.available.names) ? 0 : 1
+#   subnet_id      = aws_subnet.private.*.id[count.index]
+#   route_table_id = aws_route_table.private.*.id[count.index]
+#
+#   lifecycle {
+#     ignore_changes        = ["subnet_id"]
+#     create_before_destroy = true
+#   }
+# }

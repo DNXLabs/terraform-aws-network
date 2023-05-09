@@ -5,59 +5,100 @@ resource "aws_network_acl" "private" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-ACL-Private"
+      "Name"    = format(local.names[var.name_pattern].nacl_private, var.name, local.name_suffix)
       "Scheme"  = "private"
       "EnvName" = var.name
     }
   )
 }
 
-###########
-# EGRESS
-###########
-
-resource "aws_network_acl_rule" "out_private_to_world" {
-  network_acl_id = aws_network_acl.private.id
-  rule_number    = "1"
-  egress         = true
-  protocol       = -1
-  rule_action    = "allow"
-  cidr_block     = "0.0.0.0/0"
-  from_port      = 0
-  to_port        = 0
-}
-
-###########
-# INGRESS
-###########
-
-resource "aws_network_acl_rule" "in_private_from_world_tcp" {
+resource "aws_network_acl_rule" "in_private_from_world_tcp_return" {
   network_acl_id = aws_network_acl.private.id
   rule_number    = "1"
   egress         = false
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
-  from_port      = 1024
-  to_port        = 65535
+  from_port      = "1024"
+  to_port        = "65535"
+}
+
+resource "aws_network_acl_rule" "out_private_to_world_tcp" {
+  count          = length(var.public_nacl_outbound_tcp_ports)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 1
+  egress         = true
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = var.public_nacl_outbound_tcp_ports[count.index]
+  to_port        = tonumber(var.public_nacl_outbound_tcp_ports[count.index]) == 0 ? "65535" : var.public_nacl_outbound_tcp_ports[count.index]
+}
+
+resource "aws_network_acl_rule" "in_private_from_world_udp_return" {
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = "101"
+  egress         = false
+  protocol       = "udp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = "1024"
+  to_port        = "65535"
+}
+
+resource "aws_network_acl_rule" "out_private_to_world_udp" {
+  count          = length(var.public_nacl_outbound_udp_ports)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 101
+  egress         = true
+  protocol       = "udp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = var.public_nacl_outbound_udp_ports[count.index]
+  to_port        = tonumber(var.public_nacl_outbound_udp_ports[count.index]) == 0 ? "65535" : var.public_nacl_outbound_udp_ports[count.index]
 }
 
 resource "aws_network_acl_rule" "in_private_from_world_icmp_reply" {
+  count          = var.public_nacl_icmp ? 1 : 0
   network_acl_id = aws_network_acl.private.id
-  rule_number    = "100"
+  rule_number    = "201"
   egress         = false
   protocol       = "icmp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
-  icmp_type      = 0
+  icmp_type      = 0 # echo reply
+  icmp_code      = -1
+}
+
+resource "aws_network_acl_rule" "out_private_from_world_icmp" {
+  count          = var.public_nacl_icmp ? 1 : 0
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = "201"
+  egress         = true
+  protocol       = "icmp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  icmp_type      = 8 # echo
   icmp_code      = -1
 }
 
 resource "aws_network_acl_rule" "in_private_from_private" {
   count          = length(aws_subnet.private.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
-  rule_number    = count.index + 201
+  rule_number    = count.index + 301
   egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = aws_subnet.private[count.index].cidr_block
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_private_from_private" {
+  count          = length(aws_subnet.private.*.cidr_block)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 301
+  egress         = true
   protocol       = -1
   rule_action    = "allow"
   cidr_block     = aws_subnet.private[count.index].cidr_block
@@ -68,8 +109,20 @@ resource "aws_network_acl_rule" "in_private_from_private" {
 resource "aws_network_acl_rule" "in_private_from_public" {
   count          = length(aws_subnet.public.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
-  rule_number    = count.index + 301
+  rule_number    = count.index + 401
   egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = aws_subnet.public[count.index].cidr_block
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_private_from_public" {
+  count          = length(aws_subnet.public.*.cidr_block)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 401
+  egress         = true
   protocol       = -1
   rule_action    = "allow"
   cidr_block     = aws_subnet.public[count.index].cidr_block
@@ -80,8 +133,20 @@ resource "aws_network_acl_rule" "in_private_from_public" {
 resource "aws_network_acl_rule" "in_private_from_secure" {
   count          = length(aws_subnet.secure.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
-  rule_number    = count.index + 401
+  rule_number    = count.index + 501
   egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = aws_subnet.secure[count.index].cidr_block
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_private_from_secure" {
+  count          = length(aws_subnet.secure.*.cidr_block)
+  network_acl_id = aws_network_acl.private.id
+  rule_number    = count.index + 501
+  egress         = true
   protocol       = -1
   rule_action    = "allow"
   cidr_block     = aws_subnet.secure[count.index].cidr_block

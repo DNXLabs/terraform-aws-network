@@ -70,11 +70,17 @@ module "network" {
 | max\_az | Max number of AZs | `number` | `3` | no |
 | multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
 | name | Name prefix for the resources of this stack | `any` | n/a | yes |
+| name\_pattern | Name pattern to use for resources. Options: default, kebab | `string` | `"default"` | no |
+| name\_suffix | Adds a name suffix to all resources created | `string` | `""` | no |
+| nat | Deploy NAT instance(s) | `bool` | `true` | no |
 | network\_firewall | Enable or disable VPC Network Firewall | `bool` | `false` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
+| public\_nacl\_icmp | Allows ICMP traffic to and from the public subnet | `bool` | `true` | no |
 | public\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "80",<br>  "443",<br>  "22",<br>  "1194"<br>]</pre> | no |
 | public\_nacl\_inbound\_udp\_ports | UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | `[]` | no |
+| public\_nacl\_outbound\_tcp\_ports | TCP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
+| public\_nacl\_outbound\_udp\_ports | UDP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
 | public\_netnum\_offset | Start with this subnet for public ones, plus number of AZs | `number` | `0` | no |
 | secure\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `10` | no |
 | tags | Extra tags to attach to resources | `map(string)` | `{}` | no |
@@ -84,7 +90,7 @@ module "network" {
 | transit\_subnet | Create a transit subnet for VPC peering (only central account) | `bool` | `false` | no |
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
-| vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for dynamodb Gateway | `bool` | `true` | no |
+| vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for DynamoDB (Gateway) | `bool` | `true` | no |
 | vpc\_endpoint\_dynamodb\_policy | A policy to attach to the endpoint that controls access to the service | `string` | `"    {
         \"Statement\": [
             {
@@ -102,7 +108,7 @@ module "network" {
         ]
     }
 "` | no |
-| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | <pre>list(object(<br>    {<br>      name   = string<br>      policy = optional(string)<br>    }<br>  ))</pre> | `[]` | no |
+| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | <pre>list(object(<br>    {<br>      name          = string<br>      policy        = optional(string)<br>      allowed_cidrs = optional(list(string))<br>    }<br>  ))</pre> | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 

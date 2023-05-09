@@ -12,7 +12,7 @@ resource "aws_subnet" "public" {
   tags = merge(
     var.tags,
     {
-      "Name"                = "${var.name}-Subnet-Public-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Name"                = format(local.names[var.name_pattern].subnet_public, var.name, upper(data.aws_availability_zone.az[count.index].name_suffix), local.name_suffix)
       "Scheme"              = "public"
       "EnvName"             = var.name
       "aws-cdk:subnet-name" = "Public"
@@ -29,7 +29,7 @@ resource "aws_route_table" "public" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-RouteTable-Public"
+      "Name"    = format(local.names[var.name_pattern].routetable_public, var.name, local.name_suffix)
       "Scheme"  = "public"
       "EnvName" = var.name
     },

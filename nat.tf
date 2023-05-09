@@ -1,5 +1,5 @@
 locals {
-  nat_quantity = var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1
+  nat_quantity = var.nat ? var.multi_nat ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 1 : 0
 }
 
 resource "aws_eip" "nat_eip" {
@@ -9,7 +9,7 @@ resource "aws_eip" "nat_eip" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-EIP-${count.index}"
+      "Name"    = format(local.names[var.name_pattern].eip, var.name, count.index, local.name_suffix)
       "EnvName" = var.name
     },
   )
@@ -23,7 +23,7 @@ resource "aws_nat_gateway" "nat_gw" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-NATGW-${count.index}"
+      "Name"    = format(local.names[var.name_pattern].natgw, var.name, count.index, local.name_suffix)
       "EnvName" = var.name
     },
   )

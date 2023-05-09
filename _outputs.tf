@@ -114,7 +114,11 @@ output "public_nacls" {
   value = {
     "acl" : aws_network_acl.private
     "egress" : {
-      "out_public_world" : aws_network_acl_rule.out_public_world
+      "out_public_local" : aws_network_acl_rule.out_public_local
+      "out_public_tcp" : aws_network_acl_rule.out_public_tcp
+      "out_public_tcp_return" : aws_network_acl_rule.out_public_tcp_return
+      "out_public_udp" : aws_network_acl_rule.out_public_udp
+      "out_public_icmp" : aws_network_acl_rule.out_public_icmp
     }
     "ingress" : {
       "in_public_local" : aws_network_acl_rule.in_public_local
@@ -122,7 +126,7 @@ output "public_nacls" {
       "in_public_tcp_return" : aws_network_acl_rule.in_public_tcp_return
       "in_public_udp" : aws_network_acl_rule.in_public_udp
       "in_public_udp_return" : aws_network_acl_rule.in_public_udp_return
-      "in_public_icmp" : aws_network_acl_rule.in_public_icmp
+      "in_public_icmp_reply" : aws_network_acl_rule.in_public_icmp_reply
       "in_public_from_private" : aws_network_acl_rule.in_public_from_private
     }
   }
@@ -132,10 +136,16 @@ output "private_nacls" {
   value = {
     "acl" : aws_network_acl.private
     "egress" : {
-      "out_private_to_world" : aws_network_acl_rule.out_private_to_world
+      "out_private_to_world_tcp" : aws_network_acl_rule.out_private_to_world_tcp
+      "out_private_to_world_udp" : aws_network_acl_rule.out_private_to_world_udp
+      "out_private_from_world_icmp" : aws_network_acl_rule.out_private_from_world_icmp
+      "out_private_from_private" : aws_network_acl_rule.out_private_from_private
+      "out_private_from_public" : aws_network_acl_rule.out_private_from_public
+      "out_private_from_secure" : aws_network_acl_rule.out_private_from_secure
     }
     "ingress" : {
-      "in_private_from_world_tcp" : aws_network_acl_rule.in_private_from_world_tcp
+      "in_private_from_world_tcp_return" : aws_network_acl_rule.in_private_from_world_tcp_return
+      "in_private_from_world_udp_return" : aws_network_acl_rule.in_private_from_world_udp_return
       "in_private_from_world_icmp_reply" : aws_network_acl_rule.in_private_from_world_icmp_reply
       "in_private_from_private" : aws_network_acl_rule.in_private_from_private
       "in_private_from_public" : aws_network_acl_rule.in_private_from_public

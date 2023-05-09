@@ -12,7 +12,7 @@ resource "aws_subnet" "transit" {
   tags = merge(
     var.tags,
     {
-      "Name"                = "${var.name}-Subnet-Transit-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Name"                = format(local.names[var.name_pattern].subnet_transit, var.name, upper(data.aws_availability_zone.az[count.index].name_suffix), local.name_suffix)
       "Scheme"              = "transit"
       "EnvName"             = var.name
       "aws-cdk:subnet-name" = "Transit"
@@ -28,7 +28,7 @@ resource "aws_route_table" "transit" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-RouteTable-Transit"
+      "Name"    = format(local.names[var.name_pattern].routetable_transit, var.name, local.name_suffix)
       "Scheme"  = "transit"
       "EnvName" = var.name
     },

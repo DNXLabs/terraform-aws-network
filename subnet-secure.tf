@@ -12,7 +12,7 @@ resource "aws_subnet" "secure" {
   tags = merge(
     var.tags,
     {
-      "Name"                = "${var.name}-Subnet-Secure-${upper(data.aws_availability_zone.az[count.index].name_suffix)}"
+      "Name"                = format(local.names[var.name_pattern].subnet_secure, var.name, upper(data.aws_availability_zone.az[count.index].name_suffix), local.name_suffix)
       "Scheme"              = "secure"
       "EnvName"             = var.name
       "aws-cdk:subnet-name" = "Secure"
@@ -31,7 +31,7 @@ resource "aws_route_table" "secure" {
   tags = merge(
     var.tags,
     {
-      "Name"    = "${var.name}-RouteTable-Secure"
+      "Name"    = format(local.names[var.name_pattern].routetable_secure, var.name, local.name_suffix)
       "Scheme"  = "secure"
       "EnvName" = var.name
     },
