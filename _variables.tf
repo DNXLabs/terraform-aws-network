@@ -43,7 +43,7 @@ variable "newbits" {
 variable "vpc_cidr_summ" {
   type        = string
   default     = "/0"
-  description = "Define cidr used to summuary subnets"
+  description = "Define cidr used to summarize subnets by tier"
 }
 
 variable "tags" {
