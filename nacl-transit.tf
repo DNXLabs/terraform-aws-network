@@ -1,6 +1,6 @@
 locals {
-  transit_subnet_ip = split("/",try(element(aws_subnet.transit.*.cidr_block, length(aws_subnet.transit.*.cidr_block)-1), "0.0.0.0/0"))
-  transit_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${local.transit_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_vpc.default.cidr_block
+  transit_subnet_ip = split("/",try(element(aws_subnet.transit.*.cidr_block, length(aws_subnet.transit.*.cidr_block)-1), "0.0.0.0/0"))[0]
+  transit_subnet_summary = var.vpc_cidr_summ != "/0" ? "${cidrhost("${local.transit_subnet_ip}${var.vpc_cidr_summ}", 0)}${var.vpc_cidr_summ}" : aws_vpc.default.cidr_block
 }
 resource "aws_network_acl" "transit" {
   count      = var.transit_subnet ? 1 : 0
