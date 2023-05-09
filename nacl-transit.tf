@@ -1,5 +1,5 @@
 locals {
-  transit_subnet_ip = split("/",try(element(aws_subnet.transit.*.cidr_block, length(aws_subnet.transit.*.cidr_block)-1), "0.0.0.0/0"))[0]
+  transit_subnet_ip      = split("/", try(element(aws_subnet.transit.*.cidr_block, length(aws_subnet.transit.*.cidr_block) - 1), "0.0.0.0/0"))[0]
   transit_subnet_summary = var.vpc_cidr_summ != "/0" ? "${cidrhost("${local.transit_subnet_ip}${var.vpc_cidr_summ}", 0)}${var.vpc_cidr_summ}" : aws_vpc.default.cidr_block
 }
 resource "aws_network_acl" "transit" {
@@ -139,7 +139,7 @@ resource "aws_network_acl_rule" "in_transit_from_secure" {
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     =  var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
