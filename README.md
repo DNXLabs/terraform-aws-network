@@ -44,7 +44,7 @@ module "network" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.0 |
+| terraform | >= 0.14.0 |
 
 ## Providers
 
@@ -59,6 +59,11 @@ module "network" {
 | byoip | Enable module to use your own Elastic IPs (Bring Your Own IP) | `bool` | `false` | no |
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
 | eip\_allocation\_ids | User-specified primary or secondary private IP address to associate with the Elastic IP address | `list(string)` | `[]` | no |
+| enable\_firewall\_default\_rule | Enable or disable the default stateful rule. | `bool` | `true` | no |
+| firewall\_custom\_rule\_arn | The stateful rule group arn created outside the module | `list(string)` | `[]` | no |
+| firewall\_custom\_rules | The stateful rule group rules specifications in Suricata file format, with one rule per line | `list(string)` | `[]` | no |
+| firewall\_domain\_list | List the domain names you want to take action on. | `list(any)` | <pre>[<br>  ".amazonaws.com",<br>  ".github.com"<br>]</pre> | no |
+| firewall\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `14` | no |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_secure | List of kubernetes cluster names to creates tags in secure subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |
@@ -68,6 +73,7 @@ module "network" {
 | name\_pattern | Name pattern to use for resources. Options: default, kebab | `string` | `"default"` | no |
 | name\_suffix | Adds a name suffix to all resources created | `string` | `""` | no |
 | nat | Deploy NAT instance(s) | `bool` | `true` | no |
+| network\_firewall | Enable or disable VPC Network Firewall | `bool` | `false` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
 | public\_nacl\_icmp | Allows ICMP traffic to and from the public subnet | `bool` | `true` | no |
@@ -85,6 +91,14 @@ module "network" {
 | vpc\_cidr | Network CIDR for the VPC | `any` | n/a | yes |
 | vpc\_cidr\_transit | Network CIDR for Transit subnets | `string` | `"10.255.255.0/24"` | no |
 | vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for DynamoDB (Gateway) | `bool` | `true` | no |
+| vpc\_endpoint\_dynamodb\_policy | A policy to attach to the endpoint that controls access to the service | `string` | `"    {
+        \"Statement\": [
+            {
+                \"Action\": \"*\",\"Effect\": \"Allow\",\"Resource\": \"*\",\"Principal\": \"*\"
+            }
+        ]
+    }
+"` | no |
 | vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
 | vpc\_endpoint\_s3\_policy | A policy to attach to the endpoint that controls access to the service | `string` | `"    {
         \"Statement\": [
@@ -94,7 +108,7 @@ module "network" {
         ]
     }
 "` | no |
-| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | `list(string)` | `[]` | no |
+| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) | <pre>list(object(<br>    {<br>      name          = string<br>      policy        = optional(string)<br>      allowed_cidrs = optional(list(string))<br>    }<br>  ))</pre> | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 
@@ -104,6 +118,8 @@ module "network" {
 |------|-------------|
 | cidr\_block | CIDR for VPC created |
 | db\_subnet\_group\_id | n/a |
+| firewall\_subnet\_cidrs | List of firewall subnet CIDRs |
+| firewall\_subnet\_ids | List of firewall subnet IDs |
 | internet\_gateway\_id | ID of Internet Gateway created |
 | nat\_gateway | n/a |
 | nat\_gateway\_ids | List of NAT Gateway IDs |

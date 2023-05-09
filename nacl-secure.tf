@@ -102,3 +102,30 @@ resource "aws_network_acl_rule" "out_secure_to_s3" {
   from_port      = 0
   to_port        = 0
 }
+
+#############
+# Dynamodb Endpoint
+#############
+resource "aws_network_acl_rule" "in_secure_from_dynamodb" {
+  count          = var.vpc_endpoint_dynamodb_gateway ? length(data.aws_ec2_managed_prefix_list.dynamodb.entries) : 0
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 601
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = tolist(data.aws_ec2_managed_prefix_list.dynamodb.entries)[count.index].cidr
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_secure_to_dynamodb" {
+  count          = var.vpc_endpoint_dynamodb_gateway ? length(data.aws_ec2_managed_prefix_list.dynamodb.entries) : 0
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 601
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = tolist(data.aws_ec2_managed_prefix_list.dynamodb.entries)[count.index].cidr
+  from_port      = 0
+  to_port        = 0
+}
