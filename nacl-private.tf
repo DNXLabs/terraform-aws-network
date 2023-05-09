@@ -1,3 +1,8 @@
+locals {
+  private_subnet_ip      = split("/", element(aws_subnet.private.*.cidr_block, length(aws_subnet.private.*.cidr_block) - 1))[0]
+  private_subnet_summary = var.vpc_cidr_summ != "/0" ? "${cidrhost("${local.private_subnet_ip}${var.vpc_cidr_summ}", 0)}${var.vpc_cidr_summ}" : aws_vpc.default.cidr_block
+}
+
 resource "aws_network_acl" "private" {
   vpc_id     = aws_vpc.default.id
   subnet_ids = aws_subnet.private.*.id
@@ -83,73 +88,73 @@ resource "aws_network_acl_rule" "out_private_from_world_icmp" {
 }
 
 resource "aws_network_acl_rule" "in_private_from_private" {
-  count          = length(aws_subnet.private.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 301
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.private[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.private_subnet_summary : aws_subnet.private[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "out_private_from_private" {
-  count          = length(aws_subnet.private.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 301
   egress         = true
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.private[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.private_subnet_summary : aws_subnet.private[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "in_private_from_public" {
-  count          = length(aws_subnet.public.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 401
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.public[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.public_subnet_summary : aws_subnet.public[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "out_private_from_public" {
-  count          = length(aws_subnet.public.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 401
   egress         = true
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.public[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.public_subnet_summary : aws_subnet.public[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "in_private_from_secure" {
-  count          = length(aws_subnet.secure.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 501
   egress         = false
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.secure[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
 
 resource "aws_network_acl_rule" "out_private_from_secure" {
-  count          = length(aws_subnet.secure.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure.*.cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 501
   egress         = true
   protocol       = -1
   rule_action    = "allow"
-  cidr_block     = aws_subnet.secure[count.index].cidr_block
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure[count.index].cidr_block
   from_port      = 0
   to_port        = 0
 }
