@@ -1,6 +1,6 @@
 locals {
-  secure_subnet_ip = split("/",element(aws_subnet.secure.*.cidr_block, length(aws_subnet.secure.*.cidr_block)-1))
-  secure_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${local.secure_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_vpc.default.cidr_block
+  secure_subnet_ip = split("/",element(aws_subnet.secure.*.cidr_block, length(aws_subnet.secure.*.cidr_block)-1))[0]
+  secure_subnet_summary = var.vpc_cidr_summ != "/0" ? "${cidrhost("${local.secure_subnet_ip}${var.vpc_cidr_summ}", 0)}${var.vpc_cidr_summ}" : aws_vpc.default.cidr_block
 }
 resource "aws_network_acl" "secure" {
   vpc_id     = aws_vpc.default.id
