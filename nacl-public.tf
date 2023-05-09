@@ -1,5 +1,5 @@
 locals {
-  public_subnet_ip = split("/",aws_subnet.public.*.cidr_block)[length(aws_subnet.public.*.cidr_block)]
+  public_subnet_ip = split("/",element(aws_subnet.public.*.cidr_block, length(aws_subnet.public.*.cidr_block)-1))
   public_subnet_summary = var.vpc_cidr_summ != "/0" ? cidrhost("${local.public_subnet_ip}${var.vpc_cidr_summ}", 0) : aws_vpc.default.cidr_block
 }
 resource "aws_network_acl" "public" {
