@@ -45,7 +45,6 @@ module "network" {
 | Name | Version |
 |------|---------|
 | terraform | >= 1.5.1 |
-| terraform | >= 1.5.1 |
 
 ## Providers
 
