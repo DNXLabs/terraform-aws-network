@@ -1,41 +1,39 @@
-terraform {
-  experiments = [module_variable_optional_attrs]
-}
-
 variable "max_az" {
+  type        = number
   default     = 3
   description = "Max number of AZs"
 }
 
 variable "name" {
+  type        = string
   description = "Name prefix for the resources of this stack"
 }
 
 variable "cf_export_name" {
+  type        = string
   default     = ""
   description = "Name prefix for the export resources of the cloud formation output"
 }
 
 variable "vpc_cidr" {
+  type        = string
   description = "Network CIDR for the VPC"
 }
 
-variable "vpc_cidr_transit" {
-  default     = "10.255.255.0/24"
-  description = "Network CIDR for Transit subnets"
-}
-
 variable "nat" {
+  type        = bool
   default     = true
   description = "Deploy NAT instance(s)"
 }
 
 variable "multi_nat" {
+  type        = bool
   default     = false
   description = "Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT"
 }
 
 variable "newbits" {
+  type        = number
   default     = 5
   description = "Number of bits to add to the vpc cidr when building subnets"
 }
@@ -53,26 +51,31 @@ variable "tags" {
 }
 
 variable "public_netnum_offset" {
+  type        = number
   default     = 0
   description = "Start with this subnet for public ones, plus number of AZs"
 }
 
 variable "private_netnum_offset" {
+  type        = number
   default     = 5
   description = "Start with this subnet for private ones, plus number of AZs"
 }
 
 variable "secure_netnum_offset" {
+  type        = number
   default     = 10
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
 
 variable "transit_netnum_offset" {
+  type        = number
   default     = 15
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
 
 variable "firewall_netnum_offset" {
+  type        = number
   default     = 14
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
@@ -90,6 +93,7 @@ variable "firewall_custom_rule_arn" {
 }
 
 variable "transit_subnet" {
+  type        = bool
   default     = false
   description = "Create a transit subnet for VPC peering (only central account)"
 }
@@ -137,11 +141,13 @@ variable "transit_nacl_inbound_udp_ports" {
 }
 
 variable "vpc_flow_logs" {
+  type        = bool
   default     = true
   description = "Enable or disable VPC Flow Logs"
 }
 
 variable "vpc_flow_logs_retention" {
+  type        = number
   default     = 365
   description = "Retention in days for VPC Flow Logs CloudWatch Log Group"
 }
@@ -159,19 +165,7 @@ variable "vpc_endpoint_dynamodb_gateway" {
 }
 
 variable "vpc_endpoint_s3_policy" {
-  default     = <<POLICY
-    {
-        "Statement": [
-            {
-                "Action": "*","Effect": "Allow","Resource": "*","Principal": "*"
-            }
-        ]
-    }
-    POLICY
-  description = "A policy to attach to the endpoint that controls access to the service"
-}
-
-variable "vpc_endpoint_dynamodb_policy" {
+  type        = string
   default     = <<POLICY
     {
         "Statement": [
