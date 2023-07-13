@@ -1,4 +1,9 @@
 
+terraform {
+  required_version = ">= 1.3.0"
+}
+
+
 variable "max_az" {
   default     = 3
   description = "Max number of AZs"
@@ -314,4 +319,10 @@ locals {
       ig                 = "%s-ig%s",
     }
   }
+}
+
+variable "kms_key_arn" {
+  type        = string
+  default     = ""
+  description = "The ARN of the KMS Key to use when encrypting log data."
 }
