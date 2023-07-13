@@ -42,9 +42,17 @@ module "network" {
 
 ## Requirements
 
+For releases <= `1.8.5`
+
 | Name | Version |
 |------|---------|
 | terraform | >= 0.14.0 |
+
+For releases > `1.8.5`
+
+| Name | Version |
+|------|---------|
+| terraform | >= 1.3.0 |
 
 ## Providers
 
