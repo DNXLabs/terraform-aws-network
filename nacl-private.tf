@@ -1,11 +1,11 @@
 locals {
-  private_subnet_ip      = split("/", element(aws_subnet.private.*.cidr_block, length(aws_subnet.private.*.cidr_block) - 1))[0]
+  private_subnet_ip      = split("/", element(aws_subnet.private[*].cidr_block, length(aws_subnet.private[*].cidr_block) - 1))[0]
   private_subnet_summary = var.vpc_cidr_summ != "/0" ? "${cidrhost("${local.private_subnet_ip}${var.vpc_cidr_summ}", 0)}${var.vpc_cidr_summ}" : aws_vpc.default.cidr_block
 }
 
 resource "aws_network_acl" "private" {
   vpc_id     = aws_vpc.default.id
-  subnet_ids = aws_subnet.private.*.id
+  subnet_ids = aws_subnet.private[*].id
 
   tags = merge(
     var.tags,
@@ -88,7 +88,7 @@ resource "aws_network_acl_rule" "out_private_from_world_icmp" {
 }
 
 resource "aws_network_acl_rule" "in_private_from_private" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private[*].cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 301
   egress         = false
@@ -100,7 +100,7 @@ resource "aws_network_acl_rule" "in_private_from_private" {
 }
 
 resource "aws_network_acl_rule" "out_private_from_private" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private[*].cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 301
   egress         = true
@@ -112,7 +112,7 @@ resource "aws_network_acl_rule" "out_private_from_private" {
 }
 
 resource "aws_network_acl_rule" "in_private_from_public" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public[*].cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 401
   egress         = false
@@ -124,7 +124,7 @@ resource "aws_network_acl_rule" "in_private_from_public" {
 }
 
 resource "aws_network_acl_rule" "out_private_from_public" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public[*].cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 401
   egress         = true
@@ -136,7 +136,7 @@ resource "aws_network_acl_rule" "out_private_from_public" {
 }
 
 resource "aws_network_acl_rule" "in_private_from_secure" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure[*].cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 501
   egress         = false
@@ -148,7 +148,7 @@ resource "aws_network_acl_rule" "in_private_from_secure" {
 }
 
 resource "aws_network_acl_rule" "out_private_from_secure" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure[*].cidr_block)
   network_acl_id = aws_network_acl.private.id
   rule_number    = count.index + 501
   egress         = true

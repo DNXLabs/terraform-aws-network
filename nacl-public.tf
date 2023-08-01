@@ -1,10 +1,10 @@
 locals {
-  public_subnet_ip      = split("/", element(aws_subnet.public.*.cidr_block, length(aws_subnet.public.*.cidr_block) - 1))[0]
+  public_subnet_ip      = split("/", element(aws_subnet.public[*].cidr_block, length(aws_subnet.public[*].cidr_block) - 1))[0]
   public_subnet_summary = var.vpc_cidr_summ != "/0" ? "${cidrhost("${local.public_subnet_ip}${var.vpc_cidr_summ}", 0)}${var.vpc_cidr_summ}" : aws_vpc.default.cidr_block
 }
 resource "aws_network_acl" "public" {
   vpc_id     = aws_vpc.default.id
-  subnet_ids = aws_subnet.public.*.id
+  subnet_ids = aws_subnet.public[*].id
 
   tags = merge(
     var.tags,
@@ -157,7 +157,7 @@ resource "aws_network_acl_rule" "out_public_icmp" {
 }
 
 resource "aws_network_acl_rule" "in_public_from_private" {
-  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private.*.cidr_block)
+  count          = var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.private[*].cidr_block)
   network_acl_id = aws_network_acl.public.id
   rule_number    = count.index + 601
   egress         = false
