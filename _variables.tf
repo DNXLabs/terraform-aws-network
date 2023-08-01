@@ -316,3 +316,9 @@ locals {
     }
   }
 }
+
+variable "kms_key_arn" {
+  type        = string
+  default     = ""
+  description = "The ARN of the KMS Key to use when encrypting log data."
+}
