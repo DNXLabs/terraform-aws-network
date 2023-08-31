@@ -324,3 +324,22 @@ variable "kms_key_arn" {
   default     = ""
   description = "The ARN of the KMS Key to use when encrypting log data."
 }
+
+variable "private_extra_routes" {
+  type = list(object({
+    destination_cidr_block     = optional(string)
+    destination_prefix_list_id = optional(string)
+
+    carrier_gateway_id        = optional(string)
+    core_network_arn          = optional(string)
+    egress_only_gateway_id    = optional(string)
+    gateway_id                = optional(string)
+    nat_gateway_id            = optional(string)
+    local_gateway_id          = optional(string)
+    network_interface_id      = optional(string)
+    transit_gateway_id        = optional(string)
+    vpc_endpoint_id           = optional(string)
+    vpc_peering_connection_id = optional(string)
+  }))
+  default = []
+}
