@@ -42,17 +42,10 @@ module "network" {
 
 ## Requirements
 
-For releases <= `1.8.5`
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.14.0 |
-
-For releases > `1.8.5`
-
 | Name | Version |
 |------|---------|
 | terraform | >= 1.3.0 |
+| terraform | >= 0.14.0 |
 
 ## Providers
 
@@ -84,6 +77,7 @@ For releases > `1.8.5`
 | nat | Deploy NAT instance(s) | `bool` | `true` | no |
 | network\_firewall | Enable or disable VPC Network Firewall | `bool` | `false` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
+| private\_extra\_routes | n/a | <pre>list(object({<br>    destination_cidr_block     = optional(string)<br>    destination_prefix_list_id = optional(string)<br><br>    carrier_gateway_id        = optional(string)<br>    core_network_arn          = optional(string)<br>    egress_only_gateway_id    = optional(string)<br>    gateway_id                = optional(string)<br>    nat_gateway_id            = optional(string)<br>    local_gateway_id          = optional(string)<br>    network_interface_id      = optional(string)<br>    transit_gateway_id        = optional(string)<br>    vpc_endpoint_id           = optional(string)<br>    vpc_peering_connection_id = optional(string)<br>  }))</pre> | `[]` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
 | public\_nacl\_icmp | Allows ICMP traffic to and from the public subnet | `bool` | `true` | no |
 | public\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "80",<br>  "443",<br>  "22",<br>  "1194"<br>]</pre> | no |
