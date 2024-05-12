@@ -324,3 +324,9 @@ variable "kms_key_arn" {
   default     = ""
   description = "The ARN of the KMS Key to use when encrypting log data."
 }
+
+variable "attachInternetGateway" {
+  type        = boolean
+  default     = true
+  description = "To attach or not the internet gateway within the public subnet."
+}
