@@ -57,7 +57,7 @@ module "network" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| attachInternetGateway | To attach or not the internet gateway within the public subnet. | `boolean` | `true` | no |
+| attachInternetGateway | To attach or not the internet gateway within the public subnet. | `bool` | `true` | no |
 | byoip | Enable module to use your own Elastic IPs (Bring Your Own IP) | `bool` | `false` | no |
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
 | eip\_allocation\_ids | User-specified primary or secondary private IP address to associate with the Elastic IP address | `list(string)` | `[]` | no |

@@ -326,7 +326,7 @@ variable "kms_key_arn" {
 }
 
 variable "attachInternetGateway" {
-  type        = boolean
+  type        = bool
   default     = true
   description = "To attach or not the internet gateway within the public subnet."
 }
