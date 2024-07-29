@@ -252,6 +252,24 @@ variable "enable_firewall_default_rule" {
   description = "Enable or disable the default stateful rule."
 }
 
+variable "create_dbsubgroup_secure" {
+  type        = bool
+  default     = true
+  description = "Create Secure Subgroup"
+}
+
+variable "create_dbsubgroup_public" {
+  type        = bool
+  default     = false
+  description = "Create Public Subgroup"
+}
+
+variable "create_dbsubgroup_private" {
+  type        = bool
+  default     = false
+  description = "Create Private Subgroup"
+}
+
 locals {
   kubernetes_clusters = zipmap(
     formatlist("kubernetes.io/cluster/%s", var.kubernetes_clusters),

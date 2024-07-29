@@ -60,6 +60,9 @@ module "network" {
 | attachInternetGateway | To attach or not the internet gateway within the public subnet. | `bool` | `true` | no |
 | byoip | Enable module to use your own Elastic IPs (Bring Your Own IP) | `bool` | `false` | no |
 | cf\_export\_name | Name prefix for the export resources of the cloud formation output | `string` | `""` | no |
+| create\_dbsubgroup\_private | Create Private Subgroup | `bool` | `false` | no |
+| create\_dbsubgroup\_public | Create Public Subgroup | `bool` | `false` | no |
+| create\_dbsubgroup\_secure | Create Secure Subgroup | `bool` | `true` | no |
 | eip\_allocation\_ids | User-specified primary or secondary private IP address to associate with the Elastic IP address | `list(string)` | `[]` | no |
 | enable\_firewall\_default\_rule | Enable or disable the default stateful rule. | `bool` | `true` | no |
 | firewall\_custom\_rule\_arn | The stateful rule group arn created outside the module | `list(string)` | `[]` | no |
@@ -112,7 +115,9 @@ module "network" {
 | Name | Description |
 |------|-------------|
 | cidr\_block | CIDR for VPC created |
-| db\_subnet\_group\_id | n/a |
+| db\_subnet\_group\_private\_id | n/a |
+| db\_subnet\_group\_public\_id | n/a |
+| db\_subnet\_group\_secure\_id | n/a |
 | firewall\_subnet\_cidrs | List of firewall subnet CIDRs |
 | firewall\_subnet\_ids | List of firewall subnet IDs |
 | internet\_gateway\_id | ID of Internet Gateway created |
