@@ -58,8 +58,16 @@ output "nat_gateway_ids" {
   description = "List of NAT Gateway IDs"
 }
 
-output "db_subnet_group_id" {
-  value = aws_db_subnet_group.secure.id
+output "db_subnet_group_secure_id" {
+  value = aws_db_subnet_group.secure[0].id
+}
+
+output "db_subnet_group_private_id" {
+  value = aws_db_subnet_group.private[0].id
+}
+
+output "db_subnet_group_public_id" {
+  value = aws_db_subnet_group.public[0].id
 }
 
 output "public_route_table_id" {
