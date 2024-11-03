@@ -29,11 +29,16 @@ The following resources will be created:
 
 ```hcl
 module "network" {
-  source = "git::https://github.com/DNXLabs/terraform-aws-network.git?ref=2.0.0"
+  
+  source = "git::https://github.com/DNXLabs/terraform-aws-network.git"
+  # To use a specific version, replace <version> with the desired release (eg: 2.3.1):
+  # source = "git::https://github.com/DNXLabs/terraform-aws-network.git?ref=<version>"
 
-  vpc_cidr              = "10.1.0.0/16"
+  name                  = "MyVPC" #required
+  vpc_cidr              = "10.1.0.0/16" #required
+
+  # Add other module-specific variables here
   newbits               = 8             # will create /24 subnets
-  name                  = "MyVPC"
   multi_nat             = false
 }
 ```
