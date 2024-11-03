@@ -67,7 +67,7 @@ module "network" {
 | enable\_firewall\_default\_rule | Enable or disable the default stateful rule. | `bool` | `true` | no |
 | firewall\_custom\_rule\_arn | The stateful rule group arn created outside the module | `list(string)` | `[]` | no |
 | firewall\_custom\_rules | The stateful rule group rules specifications in Suricata file format, with one rule per line | `list(string)` | `[]` | no |
-| firewall\_domain\_list | List the domain names you want to take action on. | `list(any)` | <pre>[<br>  ".amazonaws.com",<br>  ".github.com"<br>]</pre> | no |
+| firewall\_domain\_list | List the domain names you want to take action on. | `list(any)` | <pre>[<br> ".amazonaws.com",<br> ".github.com"<br>]</pre> | no |
 | firewall\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `14` | no |
 | kms\_key\_arn | The ARN of the KMS Key to use when encrypting log data. | `string` | `""` | no |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
@@ -98,7 +98,7 @@ module "network" {
 | vpc\_cidr\_summ | Define cidr used to summarize subnets by tier | `string` | `"/0"` | no |
 | vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for DynamoDB (Gateway) | `bool` | `true` | no |
 | vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
-| vpc\_endpoint\_s3\_policy | A policy to attach to the endpoint that controls access to the service | `string` |<pre>{ "Statement": <br> [<br>  {<br>   "Action": "\*\",<br>   "Effect\": <br>     "Allow\",<br>   "Resource\":<br>     "\*\",<br>   "Principal\":<br>     \"*\" <br>  } <br> ] <br>}</pre> | no |
+| vpc\_endpoint\_s3\_policy | A policy to attach to the endpoint that controls access to the service | `string` |<pre>{ "Statement": <br> [<br>  {<br>   "Action": <br>     "\*\",<br>   "Effect\": <br>     "Allow\",<br>   "Resource\":<br>     "\*\",<br>   "Principal\":<br>     \"*\" <br>  } <br> ] <br>}</pre> | no |
 | vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) |<pre>list(object(<br>{<br>name = string<br>policy = <br> optional(string)<br>allowed_cidrs =<br> optional(list<br>     (string))<br>}<br>))</pre> | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
