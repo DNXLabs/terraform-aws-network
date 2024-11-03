@@ -99,7 +99,7 @@ module "network" {
 | vpc\_endpoint\_dynamodb\_gateway | Enable or disable VPC Endpoint for DynamoDB (Gateway) | `bool` | `true` | no |
 | vpc\_endpoint\_s3\_gateway | Enable or disable VPC Endpoint for S3 Gateway | `bool` | `true` | no |
 | vpc\_endpoint\_s3\_policy | A policy to attach to the endpoint that controls access to the service | `string` |<pre>{ "Statement": <br> [<br>  {<br>   "Action": "\*\",<br>   "Effect\": <br>     "Allow\",<br>   "Resource\":<br>     "\*\",<br>   "Principal\":<br>     \"*\" <br>  } <br> ] <br>}</pre> | no |
-| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) |<pre>list(object(<br>{<br>name          = string<br>policy        = <br>      optional(string)<br>allowed_cidrs =<br>optional(plist(string))<br>}<br>))</pre> | `[]` | no |
+| vpc\_endpoints | AWS services to create a VPC endpoint on private subnets for (e.g: ssm, ec2, ecr.dkr) |<pre>list(object(<br>{<br>name = string<br>policy = <br> optional(string)<br>allowed_cidrs =<br> optional(list<br>     (string))<br>}<br>))</pre> | `[]` | no |
 | vpc\_flow\_logs | Enable or disable VPC Flow Logs | `bool` | `true` | no |
 | vpc\_flow\_logs\_retention | Retention in days for VPC Flow Logs CloudWatch Log Group | `number` | `365` | no |
 
