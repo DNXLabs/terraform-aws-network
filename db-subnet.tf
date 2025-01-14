@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "secure" {
   count      = var.create_dbsubgroup_secure ? 1 : 0
-  name       = lower("${format(local.names[var.name_pattern].db_subnet, var.name, local.name_suffix)}-secure")
+  name       = var.db_subnet_group_secure_name_compat ? lower("${var.name}-dbsubnet") : lower("${format(local.names[var.name_pattern].db_subnet, var.name, local.name_suffix)}-secure")
   subnet_ids = aws_subnet.secure.*.id
 
   tags = merge(

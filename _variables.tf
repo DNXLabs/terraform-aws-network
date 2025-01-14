@@ -144,6 +144,12 @@ variable "transit_nacl_inbound_udp_ports" {
   description = "UDP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty)"
 }
 
+variable "secure_nacl_allow_public" {
+  type        = bool
+  default     = false
+  description = "Allow traffic between public and secure"
+}
+
 variable "vpc_flow_logs" {
   type        = bool
   default     = true
@@ -268,6 +274,12 @@ variable "create_dbsubgroup_private" {
   type        = bool
   default     = false
   description = "Create Private Subgroup"
+}
+
+variable "db_subnet_group_secure_name_compat" {
+  type        = bool
+  default     = false
+  description = "Use previous DB subnet group name (<name>-dbsubnet) for backwards compability (secure only)"
 }
 
 locals {
