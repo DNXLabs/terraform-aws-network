@@ -76,6 +76,26 @@ resource "aws_network_acl_rule" "out_secure_to_transit" {
   cidr_block     = var.vpc_cidr_summ != "/0" ? local.transit_subnet_summary : aws_subnet.transit[count.index].cidr_block
 }
 
+resource "aws_network_acl_rule" "in_secure_from_public" {
+  count          = var.secure_nacl_allow_public ? var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public[*].cidr_block) : 0
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 301
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.public_subnet_summary : aws_subnet.public[count.index].cidr_block
+}
+
+resource "aws_network_acl_rule" "out_secure_to_public" {
+  count          = var.secure_nacl_allow_public ? var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.public[*].cidr_block) : 0
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 301
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.public_subnet_summary : aws_subnet.public[count.index].cidr_block
+}
+
 #############
 # S3 Endpoint
 #############

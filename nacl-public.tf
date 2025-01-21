@@ -167,3 +167,15 @@ resource "aws_network_acl_rule" "in_public_from_private" {
   from_port      = 0
   to_port        = 0
 }
+
+resource "aws_network_acl_rule" "in_public_from_secure" {
+  count          = var.secure_nacl_allow_public ? var.vpc_cidr_summ != "/0" ? 1 : length(aws_subnet.secure[*].cidr_block) : 0
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = count.index + 701
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.vpc_cidr_summ != "/0" ? local.secure_subnet_summary : aws_subnet.secure[count.index].cidr_block
+  from_port      = 0
+  to_port        = 0
+}
