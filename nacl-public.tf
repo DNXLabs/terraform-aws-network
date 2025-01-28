@@ -179,3 +179,28 @@ resource "aws_network_acl_rule" "in_public_from_secure" {
   from_port      = 0
   to_port        = 0
 }
+
+
+resource "aws_network_acl_rule" "in_public_from_allowed_cidrs" {
+  count          = length(var.public_nacl_allow_cidrs)
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = count.index + 801
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.public_nacl_allow_cidrs[count.index]
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_public_from_allowed_cidrs" {
+  count          = length(var.public_nacl_allow_cidrs)
+  network_acl_id = aws_network_acl.public.id
+  rule_number    = count.index + 801
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.public_nacl_allow_cidrs[count.index]
+  from_port      = 0
+  to_port        = 0
+}

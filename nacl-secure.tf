@@ -149,3 +149,27 @@ resource "aws_network_acl_rule" "out_secure_to_dynamodb" {
   from_port      = 0
   to_port        = 0
 }
+
+resource "aws_network_acl_rule" "in_secure_from_allowed_cidrs" {
+  count          = length(var.secure_nacl_allow_cidrs)
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 801
+  egress         = false
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.secure_nacl_allow_cidrs[count.index]
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "out_secure_from_allowed_cidrs" {
+  count          = length(var.secure_nacl_allow_cidrs)
+  network_acl_id = aws_network_acl.secure.id
+  rule_number    = count.index + 801
+  egress         = true
+  protocol       = -1
+  rule_action    = "allow"
+  cidr_block     = var.secure_nacl_allow_cidrs[count.index]
+  from_port      = 0
+  to_port        = 0
+}
