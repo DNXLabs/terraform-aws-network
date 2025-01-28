@@ -87,13 +87,16 @@ module "network" {
 | nat | Deploy NAT instance(s) | `bool` | `true` | no |
 | network\_firewall | Enable or disable VPC Network Firewall | `bool` | `false` | no |
 | newbits | Number of bits to add to the vpc cidr when building subnets | `number` | `5` | no |
+| private\_nacl\_allow\_cidrs | CIDRs to allow traffic from private subnet | `list(string)` | `[]` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
+| public\_nacl\_allow\_cidrs | CIDRs to allow traffic from public subnet | `list(string)` | `[]` | no |
 | public\_nacl\_icmp | Allows ICMP traffic to and from the public subnet | `bool` | `true` | no |
 | public\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "80",<br>  "443",<br>  "22",<br>  "1194"<br>]</pre> | no |
 | public\_nacl\_inbound\_udp\_ports | UDP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | `[]` | no |
 | public\_nacl\_outbound\_tcp\_ports | TCP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
 | public\_nacl\_outbound\_udp\_ports | UDP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
 | public\_netnum\_offset | Start with this subnet for public ones, plus number of AZs | `number` | `0` | no |
+| secure\_nacl\_allow\_cidrs | CIDRs to allow traffic from secure subnet | `list(string)` | `[]` | no |
 | secure\_nacl\_allow\_public | Allow traffic between public and secure | `bool` | `false` | no |
 | secure\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `10` | no |
 | tags | Extra tags to attach to resources | `map(string)` | `{}` | no |
