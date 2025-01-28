@@ -150,6 +150,24 @@ variable "secure_nacl_allow_public" {
   description = "Allow traffic between public and secure"
 }
 
+variable "public_nacl_allow_cidrs" {
+  type        = list(string)
+  default     = []
+  description = "CIDRs to allow traffic from public subnet"
+}
+
+variable "private_nacl_allow_cidrs" {
+  type        = list(string)
+  default     = []
+  description = "CIDRs to allow traffic from private subnet"
+}
+
+variable "secure_nacl_allow_cidrs" {
+  type        = list(string)
+  default     = []
+  description = "CIDRs to allow traffic from secure subnet"
+}
+
 variable "vpc_flow_logs" {
   type        = bool
   default     = true
