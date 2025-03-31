@@ -29,7 +29,10 @@ resource "aws_vpc_endpoint" "dynamodb" {
 }
 
 resource "aws_vpc_endpoint_route_table_association" "private_dynamodb" {
-  count           = var.vpc_endpoint_dynamodb_gateway ? length(aws_subnet.private) : 0
-  route_table_id  = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
+  for_each = var.vpc_endpoint_dynamodb_gateway ? {
+    for idx, subnet in aws_subnet.private : idx => subnet
+  } : {}
+  route_table_id  = var.multi_nat || var.multi_az_private_rtb ? aws_route_table.private[each.keyk].id : aws_route_table.private[0].id
   vpc_endpoint_id = aws_vpc_endpoint.dynamodb[0].id
 }
+
