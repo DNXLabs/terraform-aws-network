@@ -60,7 +60,7 @@ resource "aws_route" "nat_route" {
 resource "aws_route_table_association" "private" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = var.multi_nat || var.multi_az_private_rtb ? aws_route_table.private[count.index].id : var.aws_route_table.private[0].id
+  route_table_id = var.multi_nat || var.multi_az_private_rtb ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
 
   lifecycle {
     ignore_changes        = [subnet_id]
