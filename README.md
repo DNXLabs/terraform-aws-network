@@ -80,6 +80,7 @@ module "network" {
 | kubernetes\_clusters\_secure | List of kubernetes cluster names to creates tags in secure subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_type | Use either 'owned' or 'shared' for kubernetes cluster tags | `string` | `"shared"` | no |
 | max\_az | Max number of AZs | `number` | `3` | no |
+| multi\_az\_private\_rtb | Create multiple private route tables, one per AZ | `bool` | `false` | no |
 | multi\_nat | Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT | `bool` | `false` | no |
 | name | Name prefix for the resources of this stack | `string` | n/a | yes |
 | name\_pattern | Name pattern to use for resources. Options: default, kebab | `string` | `"default"` | no |
