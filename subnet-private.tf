@@ -26,7 +26,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_route_table" "private" {
-  count = var.nat && var.multi_nat ? (
+  count = var.nat && var.multi_nat || var.nat && var.multi_az_private_rtb ? (
     length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)
   ) : 1
   vpc_id = aws_vpc.default.id
@@ -42,13 +42,13 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "nat_route" {
-  count = var.nat && var.multi_nat ? (
+  count = var.nat && var.multi_nat || var.nat && var.multi_az_private_rtb ? (
     length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names)
   ) : (var.nat ? 1 : 0)
 
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
+  nat_gateway_id         = var.multi_az_private_rtb ? aws_nat_gateway.nat_gw[count.index].id : aws_nat_gateway.nat_gw[0].id
 
   lifecycle {
     create_before_destroy = true
@@ -60,7 +60,7 @@ resource "aws_route" "nat_route" {
 resource "aws_route_table_association" "private" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = var.multi_nat ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
+  route_table_id = var.multi_nat || var.multi_az_private_rtb ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
 
   lifecycle {
     ignore_changes        = [subnet_id]

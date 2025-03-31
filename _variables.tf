@@ -36,6 +36,13 @@ variable "multi_nat" {
   description = "Number of NAT Instances, 'true' will yield one per AZ while 'false' creates one NAT"
 }
 
+variable "multi_az_private_rtb" {
+  type        = bool
+  default     = false
+  description = "Create multiple private route tables, one per AZ"
+}
+
+
 variable "newbits" {
   type        = number
   default     = 5
