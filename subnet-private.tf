@@ -48,7 +48,7 @@ resource "aws_route" "nat_route" {
 
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = var.multi_az_private_rtb ? aws_nat_gateway.nat_gw[count.index].id : aws_nat_gateway.nat_gw[0].id
+  nat_gateway_id         = var.multi_az_private_rtb ? aws_nat_gateway.nat_gw[0].id : aws_nat_gateway.nat_gw[count.index].id
 
   lifecycle {
     create_before_destroy = true
@@ -60,21 +60,10 @@ resource "aws_route" "nat_route" {
 resource "aws_route_table_association" "private" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = var.multi_nat || var.multi_az_private_rtb ? aws_route_table.private[count.index].id : aws_route_table.private[0].id
+  route_table_id = var.multi_nat  ? aws_route_table.private[0].id : aws_route_table.private[count.index].id
 
   lifecycle {
     ignore_changes        = [subnet_id]
     create_before_destroy = true
   }
 }
-
-# resource "aws_route_table_association" "private_single" {
-#   count          = var.nat_count == length(data.aws_availability_zones.available.names) ? 0 : 1
-#   subnet_id      = aws_subnet.private.*.id[count.index]
-#   route_table_id = aws_route_table.private.*.id[count.index]
-#
-#   lifecycle {
-#     ignore_changes        = ["subnet_id"]
-#     create_before_destroy = true
-#   }
-# }
