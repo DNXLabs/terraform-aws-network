@@ -67,7 +67,7 @@ output "db_subnet_group_private_id" {
 }
 
 output "db_subnet_group_public_id" {
-   value = try(aws_db_subnet_group.public[0].id, null)
+  value = try(aws_db_subnet_group.public[0].id, null)
 }
 
 output "public_route_table_id" {
@@ -187,3 +187,4 @@ output "secure_db_subnet" {
 output "nat_gateway" {
   value = aws_nat_gateway.nat_gw
 }
+
