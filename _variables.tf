@@ -27,7 +27,18 @@ variable "vpc_cidr" {
 variable "nat" {
   type        = bool
   default     = true
-  description = "Deploy NAT instance(s)"
+  description = "Deploy NAT resources (gateway or instance)"
+}
+
+variable "nat_type" {
+  type        = string
+  default     = "gateway"
+  description = "Type of NAT to deploy ('gateway' or 'instance')"
+
+  validation {
+    condition     = contains(["gateway", "instance"], var.nat_type)
+    error_message = "nat_type must be either 'gateway' or 'instance'"
+  }
 }
 
 variable "multi_nat" {
@@ -375,4 +386,21 @@ variable "attachInternetGateway" {
   type        = bool
   default     = true
   description = "To attach or not the internet gateway within the public subnet."
+}
+
+# NAT instance specific variables
+variable "nat_instance_config" {
+  type = object({
+    nat_instance_type           = string
+    max_instance_lifetime       = number
+    lifecycle_heartbeat_timeout = number
+    architecture                = string
+  })
+  default = {
+    nat_instance_type           = "t3.nano"
+    max_instance_lifetime       = 1209600
+    lifecycle_heartbeat_timeout = 180
+    architecture                = "arm64"
+  }
+  description = "Configuration for NAT instances when nat_type is 'instance'"
 }
