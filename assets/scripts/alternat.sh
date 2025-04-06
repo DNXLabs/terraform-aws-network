@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Send output to a file and to the console
-# Credit to the alestic blog for this one-liner
-# https://alestic.com/2010/12/ec2-user-data-output/
 exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
 
+# Update the package cache
+yum update -y
+# Install the Network Flow Monitor agent (adjust package name as needed)
+yum install -y network-flow-monitor-agent
+# Enable and start the agent service
+systemctl enable network-flow-monitor-agent
+systemctl start network-flow-monitor-agent
 shopt -s expand_aliases
 
 panic() {

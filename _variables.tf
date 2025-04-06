@@ -388,19 +388,19 @@ variable "attachInternetGateway" {
   description = "To attach or not the internet gateway within the public subnet."
 }
 
-# NAT instance specific variables
 variable "nat_instance_config" {
   type = object({
+    # multi_az                    = bool # TODO:
     nat_instance_type           = string
     max_instance_lifetime       = number
     lifecycle_heartbeat_timeout = number
     architecture                = string
   })
   default = {
-    nat_instance_type           = "t3.nano"
-    max_instance_lifetime       = 1209600
-    lifecycle_heartbeat_timeout = 180
-    architecture                = "arm64"
+    nat_instance_type           = "t3.micro"
+    max_instance_lifetime       = 1209600 # 14 days
+    lifecycle_heartbeat_timeout = 300
+    architecture                = "x86_64"
   }
   description = "Configuration for NAT instances when nat_type is 'instance'"
 }

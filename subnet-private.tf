@@ -48,7 +48,7 @@ resource "aws_route" "nat_route" {
 
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
+  nat_gateway_id         = local.use_nat_instance ? aws_nat_gateway.nat_gw[0].id : aws_nat_gateway.nat_gw[count.index].id
 
   lifecycle {
     create_before_destroy = true

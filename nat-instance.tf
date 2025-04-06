@@ -1,7 +1,7 @@
 locals {
-  nat_instance_public_subnets = local.use_nat_instance ? (
-    var.multi_nat ? aws_subnet.public[*].id : [aws_subnet.public[0].id]
-  ) : []
+  use_nat_instance = lower(var.nat_type) == "instance" ? true : false
+
+  nat_instance_quantity = local.use_nat_instance ? length(data.aws_availability_zones.available.names) > var.max_az ? var.max_az : length(data.aws_availability_zones.available.names) : 0
 
   # Create mapping of AZ to all the private route tables that should use a NAT instance in that AZ
   az_to_route_tables = local.use_nat_instance ? {
@@ -77,7 +77,7 @@ data "aws_ami" "amazon_linux_2023" {
 
   filter {
     name   = "name"
-    values = ["al2023-ami-2023*-${var.architecture}"]
+    values = ["al2023-ami-2023*-x86_64"]
   }
 
   filter {
@@ -88,7 +88,7 @@ data "aws_ami" "amazon_linux_2023" {
 
 # EIPs for NAT instances
 resource "aws_eip" "nat_instance_eip" {
-  count  = local.use_nat_instance ? length(local.nat_instance_public_subnets) : 0
+  count  = local.use_nat_instance ? local.nat_instance_quantity : 0
   domain = "vpc"
 
   tags = merge(
@@ -205,15 +205,15 @@ resource "aws_iam_instance_profile" "nat_instance" {
 
 # Launch template for NAT instances
 resource "aws_launch_template" "nat_instance" {
-  for_each = local.use_nat_instance ? toset(local.nat_instance_public_subnets) : toset([])
+  count = local.nat_instance_quantity
 
   name_prefix   = "nat-instance-"
-  instance_type = var.nat_instance_config.nat_instance_config
+  instance_type = var.nat_instance_config.nat_instance_type
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.nat_instance[0].arn
   }
-  image_id = data.aws_ami.amazon_linux_2023.id
+  image_id = data.aws_ami.amazon_linux_2023[0].id
 
   metadata_options {
     http_endpoint               = "enabled"
@@ -249,16 +249,16 @@ resource "aws_launch_template" "nat_instance" {
 
 # Auto Scaling Group for NAT instances
 resource "aws_autoscaling_group" "nat_instance" {
-  for_each = local.use_nat_instance ? { for id in local.nat_instance_public_subnets : id => id } : {}
+  count = local.nat_instance_quantity
 
-  name                  = "${var.name}-nat-instance-${data.aws_subnet.public_for_nat[each.key].availability_zone}-asg"
+  name_prefix           = "nat-instance-${var.name}-asg-${count.index}"
   max_size              = 1
   min_size              = 1
-  max_instance_lifetime = var.nat_instance_configna.max_instance_lifetime
-  vpc_zone_identifier   = [each.key]
+  max_instance_lifetime = var.nat_instance_config.max_instance_lifetime
+  vpc_zone_identifier   = [aws_subnet.public[count.index].id]
 
   launch_template {
-    id      = aws_launch_template.nat_instance[each.key].id
+    id      = aws_launch_template.nat_instance[count.index].id
     version = "$Latest"
   }
 
@@ -274,12 +274,6 @@ resource "aws_autoscaling_group" "nat_instance" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-# Get subnet details for NAT instances
-data "aws_subnet" "public_for_nat" {
-  for_each = local.use_nat_instance ? toset(local.nat_instance_public_subnets) : toset([])
-  id       = each.key
 }
 
 # SNS Topic for ASG lifecycle events
@@ -453,7 +447,7 @@ resource "aws_lambda_function" "connectivity_tester" {
   environment {
     variables = {
       ROUTE_TABLE_IDS_CSV = join(",", aws_route_table.private[*].id)
-      PUBLIC_SUBNET_ID    = local.nat_instance_public_subnets[0]
+      PUBLIC_SUBNET_ID    = aws_subnet.public[count.index].id
       CHECK_URLS          = "https://www.google.com"
       HAS_IPV6            = "false"
     }
@@ -533,3 +527,268 @@ resource "aws_sns_topic_subscription" "lambda_subscription" {
   endpoint  = aws_lambda_function.alternat_autoscaling_hook[0].arn
 }
 
+resource "aws_cloudwatch_dashboard" "nat_dashboard" {
+  count          = local.use_nat_instance ? 1 : 0
+  dashboard_name = "nat-instance-${var.name}-dashboard"
+
+  dashboard_body = jsonencode({
+    widgets = [
+      # Header information
+      {
+        type   = "text"
+        x      = 0
+        y      = 0
+        width  = 24
+        height = 2
+        properties = {
+          markdown = <<-EOT
+          # NAT Gateway vs NAT Instance Dashboard
+
+          This dashboard compares metrics between NAT Gateway and NAT Instance resources across availability zones.
+          EOT
+        }
+      },
+
+      # NAT Instance Status - EC2 Status Check
+      {
+        type   = "metric"
+        x      = 0
+        y      = 2
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            for asg in aws_autoscaling_group.nat_instance : ["AWS/EC2", "StatusCheckFailed", "AutoScalingGroupName", asg.name, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Instance Status Check Failures"
+          stat   = "Maximum"
+        }
+      },
+
+      # NAT Instance CPU Utilization by AZ
+      {
+        type   = "metric"
+        x      = 12
+        y      = 2
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            for asg in aws_autoscaling_group.nat_instance : ["AWS/EC2", "CPUUtilization", "AutoScalingGroupName", asg.name, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Instance CPU Utilization By AZ"
+          stat   = "Average"
+        }
+      },
+
+      # NAT Instance Network In by AZ
+      {
+        type   = "metric"
+        x      = 0
+        y      = 8
+        width  = 8
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            for asg in aws_autoscaling_group.nat_instance : ["AWS/EC2", "NetworkIn", "AutoScalingGroupName", asg.name, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Instance NetworkIn By AZ"
+          stat   = "Sum"
+        }
+      },
+
+      # NAT Instance Network Out by AZ
+      {
+        type   = "metric"
+        x      = 8
+        y      = 8
+        width  = 8
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            for asg in aws_autoscaling_group.nat_instance : ["AWS/EC2", "NetworkOut", "AutoScalingGroupName", asg.name, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Instance NetworkOut By AZ"
+          stat   = "Sum"
+        }
+      },
+
+      # NAT Gateway Bytes Processed by AZ
+      {
+        type   = "metric"
+        x      = 0
+        y      = 14
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            ["AWS/NATGateway", "BytesInFromDestination", "NatGatewayId", aws_nat_gateway.nat_gw[0].id, { "period" : 60 }],
+            ["AWS/NATGateway", "BytesInFromDestination", "NatGatewayId", aws_nat_gateway.nat_gw[0].id, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Gateway Bytes Processed In/Out"
+          stat   = "Sum"
+        }
+      },
+
+      # NAT Gateway Packets Processed by AZ
+      {
+        type   = "metric"
+        x      = 12
+        y      = 14
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            ["AWS/NATGateway", "PacketsInFromDestination", "NatGatewayId", aws_nat_gateway.nat_gw[0].id, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Gateway Packets Processed"
+          stat   = "Sum"
+        }
+      },
+
+      # NAT Gateway Error Port Allocation
+      {
+        type   = "metric"
+        x      = 0
+        y      = 20
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            ["AWS/NATGateway", "ErrorPortAllocation", "NatGatewayId", aws_nat_gateway.nat_gw[0].id, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Gateway Port Allocation Errors"
+          stat   = "Sum"
+        }
+      },
+
+      # NAT Gateway Connection Established
+      {
+        type   = "metric"
+        x      = 12
+        y      = 20
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            ["AWS/NATGateway", "ActiveConnectionCount", "NatGatewayId", aws_nat_gateway.nat_gw[0].id, { "period" : 60 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Gateway Active Connections"
+          stat   = "Average"
+        }
+      },
+
+      # NAT Instance vs Gateway Traffic Comparison
+      # {
+      #   type   = "metric"
+      #   x      = 0
+      #   y      = 26
+      #   width  = 24
+      #   height = 6
+      #   properties = {
+      #     view    = "timeSeries"
+      #     stacked = false
+      #     metrics = concat(
+      #       flatten([
+      #         for asg in aws_autoscaling_group.nat_instance : [
+      #           ["AWS/EC2", "NetworkOut", "AutoScalingGroupName", asg.name, { "period" : 60, "label" : "NAT Instance Network Out" }]
+      #         ]
+      #       ]),
+      #       [
+      #         ["AWS/NATGateway", "BytesProcessedOut", "NatGatewayId", aws_nat_gateway.nat_gw[0].id, { "period" : 60, "label" : "NAT Gateway Bytes Out" }]
+      #       ]
+      #     )
+      #     region = data.aws_region.current.name
+      #     title  = "NAT Instance vs Gateway Outbound Traffic"
+      #     stat   = "Sum"
+      #   }
+      # },
+
+      # Custom NAT Instance Connectivity Check by AZ
+      {
+        type   = "metric"
+        x      = 0
+        y      = 32
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            ["NATInstance", "ConnectivityCheck", "Destination", "https://www.google.com", { "period" : 300 }],
+            ["NATInstance", "ConnectivityCheck", "Destination", "https://aws.amazon.com", { "period" : 300 }],
+            ["NATInstance", "ConnectivityCheck", "Destination", "https://api.ipify.org", { "period" : 300 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Instance Connectivity Checks"
+          stat   = "Average"
+          yAxis = {
+            left = {
+              min = 0
+              max = 1
+            }
+          }
+        }
+      },
+
+      # NAT Instance Custom Network Metrics
+      {
+        type   = "metric"
+        x      = 12
+        y      = 32
+        width  = 12
+        height = 6
+        properties = {
+          view    = "timeSeries"
+          stacked = false
+          metrics = [
+            ["NATInstance", "NetworkBytesIn", { "period" : 300 }],
+            ["NATInstance", "NetworkBytesOut", { "period" : 300 }]
+          ]
+          region = data.aws_region.current.name
+          title  = "NAT Instance Custom Network Metrics"
+          stat   = "Average"
+        }
+      },
+
+      # NAT Instance Logs - User Data
+      {
+        type   = "log"
+        x      = 0
+        y      = 38
+        width  = 12
+        height = 6
+        properties = {
+          query  = "SOURCE '/ec2/nat-instance/user-data' | fields @timestamp, @message | sort @timestamp desc | limit 100"
+          region = data.aws_region.current.name
+          title  = "NAT Instance User Data Logs"
+          view   = "table"
+        }
+      },
+    ]
+  })
+}
