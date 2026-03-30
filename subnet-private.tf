@@ -8,8 +8,9 @@ resource "aws_subnet" "private" {
     count.index + var.private_netnum_offset,
   )
 
-  availability_zone       = data.aws_availability_zones.available.names[count.index]
-  map_public_ip_on_launch = false
+  availability_zone                   = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch             = false
+  private_dns_hostname_type_on_launch = var.private_hostname_type
 
   tags = merge(
     var.tags,

@@ -94,6 +94,7 @@ module "network" {
 | firewall\_domain\_list | List the domain names you want to take action on. | `list(any)` | <pre>[<br>  ".amazonaws.com",<br>  ".github.com"<br>]</pre> | no |
 | firewall\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `14` | no |
 | firewall\_newbits | Number of bits to add to the vpc cidr for firewall subnets (overrides 'newbits' if set) | `number` | `null` | no |
+| firewall\_hostname\_type | The type of hostnames to assign instances in the firewall subnets at launch. Valid values: `ip-name`, `resource-name`. | `string` | `null` | no |
 | kms\_key\_arn | The ARN of the KMS Key to use when encrypting log data. | `string` | `""` | no |
 | kubernetes\_clusters | List of kubernetes cluster names to creates tags in public and private subnets of this VPC | `list(string)` | `[]` | no |
 | kubernetes\_clusters\_secure | List of kubernetes cluster names to creates tags in secure subnets of this VPC | `list(string)` | `[]` | no |
@@ -109,6 +110,7 @@ module "network" {
 | private\_nacl\_allow\_cidrs | CIDRs to allow traffic from private subnet | `list(string)` | `[]` | no |
 | private\_netnum\_offset | Start with this subnet for private ones, plus number of AZs | `number` | `5` | no |
 | private\_newbits | Number of bits to add to the vpc cidr for private subnets (overrides 'newbits' if set) | `number` | `null` | no |
+| private\_hostname\_type | The type of hostnames to assign instances in the private subnets at launch. Valid values: `ip-name`, `resource-name`. | `string` | `null` | no |
 | public\_nacl\_allow\_cidrs | CIDRs to allow traffic from public subnet | `list(string)` | `[]` | no |
 | public\_nacl\_icmp | Allows ICMP traffic to and from the public subnet | `bool` | `true` | no |
 | public\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on public subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "80",<br>  "443",<br>  "22",<br>  "1194"<br>]</pre> | no |
@@ -117,15 +119,18 @@ module "network" {
 | public\_nacl\_outbound\_udp\_ports | UDP Ports to allow outbound to external services (use [0] to allow all ports) | `list(string)` | <pre>[<br>  "0"<br>]</pre> | no |
 | public\_netnum\_offset | Start with this subnet for public ones, plus number of AZs | `number` | `0` | no |
 | public\_newbits | Number of bits to add to the vpc cidr for public subnets (overrides 'newbits' if set) | `number` | `null` | no |
+| public\_hostname\_type | The type of hostnames to assign instances in the public subnets at launch. Valid values: `ip-name`, `resource-name`. | `string` | `null` | no |
 | secure\_nacl\_allow\_cidrs | CIDRs to allow traffic from secure subnet | `list(string)` | `[]` | no |
 | secure\_nacl\_allow\_public | Allow traffic between public and secure | `bool` | `false` | no |
 | secure\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `10` | no |
 | secure\_newbits | Number of bits to add to the vpc cidr for secure subnets (overrides 'newbits' if set) | `number` | `null` | no |
+| secure\_hostname\_type | The type of hostnames to assign instances in the secure subnets at launch. Valid values: `ip-name`, `resource-name`. | `string` | `null` | no |
 | tags | Extra tags to attach to resources | `map(string)` | `{}` | no |
 | transit\_nacl\_inbound\_tcp\_ports | TCP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "1194"<br>]</pre> | no |
 | transit\_nacl\_inbound\_udp\_ports | UDP Ports to allow inbound on transit subnet via NACLs (this list cannot be empty) | `list(string)` | <pre>[<br>  "1194"<br>]</pre> | no |
 | transit\_netnum\_offset | Start with this subnet for secure ones, plus number of AZs | `number` | `15` | no |
 | transit\_newbits | Number of bits to add to the vpc cidr for transit subnets (overrides 'newbits' if set) | `number` | `null` | no |
+| transit\_hostname\_type | The type of hostnames to assign instances in the transit subnets at launch. Valid values: `ip-name`, `resource-name`. | `string` | `null` | no |
 | transit\_subnet | Create a transit subnet for VPC peering (only central account) | `bool` | `false` | no |
 | vpc\_cidr | Network CIDR for the VPC | `string` | n/a | yes |
 | vpc\_cidr\_summ | Define cidr used to summarize subnets by tier | `string` | `"/0"` | no |

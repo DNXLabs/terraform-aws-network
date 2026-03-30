@@ -114,6 +114,36 @@ variable "firewall_netnum_offset" {
   description = "Start with this subnet for secure ones, plus number of AZs"
 }
 
+variable "public_hostname_type" {
+  type        = string
+  default     = null
+  description = "The type of hostnames to assign instances in the public subnets at launch. Valid values: `ip-name`, `resource-name`."
+}
+
+variable "private_hostname_type" {
+  type        = string
+  default     = null
+  description = "The type of hostnames to assign instances in the private subnets at launch. Valid values: `ip-name`, `resource-name`."
+}
+
+variable "secure_hostname_type" {
+  type        = string
+  default     = null
+  description = "The type of hostnames to assign instances in the secure subnets at launch. Valid values: `ip-name`, `resource-name`."
+}
+
+variable "transit_hostname_type" {
+  type        = string
+  default     = null
+  description = "The type of hostnames to assign instances in the transit subnets at launch. Valid values: `ip-name`, `resource-name`."
+}
+
+variable "firewall_hostname_type" {
+  type        = string
+  default     = null
+  description = "The type of hostnames to assign instances in the firewall subnets at launch. Valid values: `ip-name`, `resource-name`."
+}
+
 variable "firewall_custom_rules" {
   type        = list(string)
   default     = []

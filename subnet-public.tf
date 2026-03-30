@@ -6,8 +6,9 @@ resource "aws_subnet" "public" {
     local.public_newbits_effective,
     count.index + var.public_netnum_offset,
   )
-  availability_zone       = data.aws_availability_zones.available.names[count.index]
-  map_public_ip_on_launch = true
+  availability_zone                   = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch             = true
+  private_dns_hostname_type_on_launch = var.public_hostname_type
 
   tags = merge(
     var.tags,
